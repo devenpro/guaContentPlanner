@@ -1,0 +1,224 @@
+/* ============================================================
+   New Hub AI Wizard (modal overlay, 3 steps)
+   ============================================================ */
+
+.wcp-nhw {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wcp-space-4);
+}
+
+/* ─────── Progress stepper ─────── */
+.wcp-nhw-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wcp-space-2);
+  padding: var(--wcp-space-2) 0 var(--wcp-space-3);
+  border-bottom: 1px solid var(--wcp-border-light);
+}
+
+.wcp-nhw-step {
+  display: flex;
+  align-items: center;
+  gap: var(--wcp-space-2);
+  color: var(--wcp-text-muted);
+  font-size: var(--wcp-font-size-sm);
+  font-weight: 500;
+}
+
+.wcp-nhw-step-active .wcp-nhw-label,
+.wcp-nhw-step-done .wcp-nhw-label {
+  color: var(--wcp-text-primary);
+  font-weight: 600;
+}
+
+.wcp-nhw-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--wcp-gray-100, #eee);
+  color: var(--wcp-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--wcp-border-light);
+  transition: all 0.15s ease;
+}
+
+.wcp-nhw-step-active .wcp-nhw-dot {
+  background: var(--wcp-accent, #2563eb);
+  color: white;
+  border-color: var(--wcp-accent, #2563eb);
+}
+
+.wcp-nhw-step-done .wcp-nhw-dot {
+  background: var(--wcp-success, #059669);
+  color: white;
+  border-color: var(--wcp-success, #059669);
+}
+
+.wcp-nhw-line {
+  flex: 0 0 40px;
+  height: 2px;
+  background: var(--wcp-border-light);
+}
+
+/* ─────── Step body ─────── */
+.wcp-nhw-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wcp-space-3);
+}
+
+.wcp-nhw-step-hero {
+  text-align: center;
+  padding: var(--wcp-space-3) 0 var(--wcp-space-2);
+}
+
+.wcp-nhw-hero-icon {
+  font-size: 2rem;
+  color: var(--wcp-accent, #2563eb);
+  margin-bottom: 6px;
+}
+
+.wcp-nhw-hero-title {
+  font-size: var(--wcp-font-size-lg);
+  font-weight: 700;
+  color: var(--wcp-text-primary);
+}
+
+.wcp-nhw-hero-sub {
+  font-size: var(--wcp-font-size-sm);
+  color: var(--wcp-text-secondary);
+  margin-top: 4px;
+}
+
+/* ─────── Loading state (Step 2) ─────── */
+.wcp-nhw-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--wcp-space-6) var(--wcp-space-4);
+  gap: var(--wcp-space-2);
+  text-align: center;
+}
+
+.wcp-nhw-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--wcp-gray-100);
+  border-top-color: var(--wcp-accent, #2563eb);
+  border-radius: 50%;
+  animation: wcp-nhw-spin 0.9s linear infinite;
+}
+
+@keyframes wcp-nhw-spin {
+  to { transform: rotate(360deg); }
+}
+
+.wcp-nhw-loading-title {
+  font-size: var(--wcp-font-size-base);
+  font-weight: 600;
+  color: var(--wcp-text-primary);
+  margin-top: var(--wcp-space-2);
+}
+
+.wcp-nhw-loading-sub {
+  font-size: var(--wcp-font-size-sm);
+  color: var(--wcp-text-muted);
+}
+
+/* ─────── Step 3 confirm card ─────── */
+.wcp-nhw-summary {
+  text-align: center;
+  padding-bottom: var(--wcp-space-2);
+}
+
+.wcp-nhw-summary-title {
+  font-size: var(--wcp-font-size-lg);
+  font-weight: 700;
+  color: var(--wcp-text-primary);
+}
+
+.wcp-nhw-summary-sub {
+  font-size: var(--wcp-font-size-sm);
+  color: var(--wcp-text-secondary);
+  margin-top: 4px;
+}
+
+.wcp-nhw-confirm-card {
+  background: var(--wcp-gray-50, #fafafa);
+  border: 1px solid var(--wcp-border-light);
+  border-radius: var(--wcp-radius-md);
+  padding: var(--wcp-space-3);
+}
+
+.wcp-nhw-confirm-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--wcp-space-3);
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--wcp-border-light);
+  font-size: var(--wcp-font-size-sm);
+}
+
+.wcp-nhw-confirm-row:last-child { border-bottom: none; }
+
+.wcp-nhw-confirm-label {
+  color: var(--wcp-text-muted);
+  font-weight: 500;
+}
+
+.wcp-nhw-confirm-value {
+  color: var(--wcp-text-primary);
+}
+
+.wcp-nhw-cluster-summary {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.wcp-nhw-cluster-summary li {
+  margin: 2px 0;
+  font-size: var(--wcp-font-size-sm);
+}
+
+/* ─────── Wizard footer (shared across all steps) ─────── */
+.wcp-nhw-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--wcp-space-2);
+  padding-top: var(--wcp-space-3);
+  border-top: 1px solid var(--wcp-border-light);
+  margin-top: var(--wcp-space-2);
+}
+
+/* Align "Back" buttons to the left when paired with primary nav */
+.wcp-nhw-footer > button[data-action^="nhw-back"] {
+  margin-right: auto;
+}
+
+/* Disable the "Quick add" button when rendered inside the wizard (we
+   inject the shared card renderer but want to hide its buttons) */
+[data-action="__disabled__"] { display: none !important; }
+
+/* When the shared hub-suggestion card is rendered inside the wizard,
+   hide its built-in footer — the wizard provides its own nav. */
+.wcp-nhw .wcp-hs-footer { display: none; }
+
+/* Inline error banner inside the wizard body */
+.wcp-nhw-error {
+  display: flex;
+  align-items: center;
+  gap: var(--wcp-space-2);
+  padding: var(--wcp-space-3) var(--wcp-space-4);
+  background: var(--wcp-error-light, #fef2f2);
+  color: var(--wcp-error, #dc2626);
+  border-radius: var(--wcp-radius-md);
+  font-size: var(--wcp-font-size-sm);
+  font-weight: 500;
+  margin: var(--wcp-space-2) 0;
+}

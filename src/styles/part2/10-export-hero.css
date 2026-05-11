@@ -1,0 +1,49 @@
+/* ═══ EXPORT STEP — HERO LAYOUT (2026-04 redesign) ═══ */
+.wcp-export-hero { border-radius: var(--wcp-radius-lg); padding: var(--wcp-space-5) var(--wcp-space-6); margin-bottom: var(--wcp-space-4); border: 1.5px solid var(--wcp-border-light); background: linear-gradient(135deg, var(--wcp-white) 0%, var(--wcp-gray-50) 100%); }
+.wcp-export-hero-ready { border-color: var(--wcp-success); background: linear-gradient(135deg, var(--wcp-white) 0%, #ecfdf5 100%); }
+.wcp-export-hero-incomplete { border-color: var(--wcp-warning); background: linear-gradient(135deg, var(--wcp-white) 0%, #fffbeb 100%); }
+.wcp-export-hero-exported { border-color: var(--wcp-success); background: linear-gradient(135deg, var(--wcp-white) 0%, #f8fafc 100%); border-left-width: 4px; }
+
+.wcp-export-hero-status { display: inline-flex; align-items: center; gap: var(--wcp-space-2); font-size: var(--wcp-font-size-sm); font-weight: 600; padding: 4px 12px; border-radius: 999px; background: var(--wcp-white); color: var(--wcp-text-primary); margin-bottom: var(--wcp-space-3); border: 1px solid var(--wcp-border-default); }
+.wcp-export-hero-ready .wcp-export-hero-status { color: var(--wcp-success); border-color: var(--wcp-success); }
+.wcp-export-hero-incomplete .wcp-export-hero-status { color: var(--wcp-warning); border-color: var(--wcp-warning); }
+.wcp-export-hero-exported .wcp-export-hero-status { color: var(--wcp-primary); border-color: var(--wcp-primary); }
+
+.wcp-export-hero-title { font-family: var(--wcp-font-display); font-size: var(--wcp-font-size-2xl); font-weight: 800; line-height: 1.25; color: var(--wcp-text-primary); margin: 0 0 var(--wcp-space-3); letter-spacing: -0.02em; }
+.wcp-export-hero-meta { display: flex; flex-wrap: wrap; gap: var(--wcp-space-2); }
+.wcp-export-hero-meta .wcp-badge { padding: 4px 10px; font-size: var(--wcp-font-size-xs); font-weight: 600; border-radius: var(--wcp-radius-md); display: inline-flex; align-items: center; gap: 4px; }
+
+.wcp-export-cta-row { display: flex; gap: var(--wcp-space-2); align-items: center; flex-wrap: wrap; margin-bottom: var(--wcp-space-5); }
+.wcp-export-cta { padding: var(--wcp-space-3) var(--wcp-space-5); font-size: var(--wcp-font-size-md); font-weight: 700; letter-spacing: 0.01em; box-shadow: var(--wcp-shadow-sm); transition: all var(--wcp-transition-fast); }
+.wcp-export-cta:hover { box-shadow: var(--wcp-shadow-md); transform: translateY(-1px); }
+.wcp-export-cta-warn { opacity: 0.85; }
+
+/* Success-solid variant — used for the "Open in Content Writer" CTA after
+   a content piece has been exported. Distinct green so the completed/
+   navigation action reads clearly against the primary-blue "Send" CTA. */
+.wcp-btn-success-solid { background: var(--wcp-success); color: #fff; border-color: var(--wcp-success); }
+.wcp-btn-success-solid:hover { background: #047857; border-color: #047857; color: #fff; }
+.wcp-btn-success-solid:focus-visible { box-shadow: 0 0 0 3px rgba(5,150,105,0.25); }
+.wcp-export-cta-open { letter-spacing: 0.02em; }
+.wcp-export-cta-open i { transition: transform var(--wcp-transition-fast); }
+.wcp-export-cta-open:hover i { transform: translate(1px,-1px); }
+
+.wcp-export-columns { display: grid; grid-template-columns: 1fr 1fr; gap: var(--wcp-space-4); margin-bottom: var(--wcp-space-3); }
+.wcp-export-panel { border: 1px solid var(--wcp-border-light); border-radius: var(--wcp-radius-lg); background: var(--wcp-white); overflow: hidden; }
+.wcp-export-panel-header { padding: var(--wcp-space-3) var(--wcp-space-4); background: var(--wcp-gray-50); border-bottom: 1px solid var(--wcp-border-light); font-size: var(--wcp-font-size-sm); font-weight: 700; color: var(--wcp-text-primary); display: flex; align-items: center; gap: var(--wcp-space-2); }
+.wcp-export-panel-body { padding: var(--wcp-space-3) var(--wcp-space-4); }
+
+.wcp-export-row { display: flex; justify-content: space-between; align-items: center; gap: var(--wcp-space-2); padding: var(--wcp-space-2) 0; border-bottom: 1px dashed var(--wcp-border-light); }
+.wcp-export-row:last-child { border-bottom: none; }
+.wcp-export-row-label { font-size: var(--wcp-font-size-xs); color: var(--wcp-text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.wcp-export-row-value { font-size: var(--wcp-font-size-sm); color: var(--wcp-text-primary); font-weight: 500; text-align: right; word-break: break-word; max-width: 60%; }
+
+.wcp-export-val-info { color: var(--wcp-text-muted); padding: var(--wcp-space-1) 0; display: flex; align-items: center; gap: var(--wcp-space-2); font-size: var(--wcp-font-size-sm); }
+
+@media (max-width: 768px) {
+  .wcp-export-hero { padding: var(--wcp-space-4); }
+  .wcp-export-hero-title { font-size: var(--wcp-font-size-xl); }
+  .wcp-export-columns { grid-template-columns: 1fr; }
+  .wcp-export-cta { width: 100%; justify-content: center; }
+  .wcp-export-cta-row { flex-direction: column; align-items: stretch; }
+}

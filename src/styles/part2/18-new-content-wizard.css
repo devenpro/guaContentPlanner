@@ -1,0 +1,205 @@
+/* ============================================================
+   New Content AI Wizard
+   ============================================================
+   Reuses the generic `.wcp-nhw-*` progress + hero + footer +
+   loading classes from 17-new-hub-wizard.css. Everything here
+   is wizard-specific (mode picker, source input, draft preview).
+   ============================================================ */
+
+.wcp-ncw {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wcp-space-4);
+}
+
+/* ─────── Step 1 — Mode picker ─────── */
+
+.wcp-ncw-mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--wcp-space-3);
+  padding: var(--wcp-space-2) 0;
+}
+
+@media (max-width: 600px) {
+  .wcp-ncw-mode-grid { grid-template-columns: 1fr; }
+}
+
+.wcp-ncw-mode {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--wcp-space-2);
+  padding: var(--wcp-space-4);
+  background: var(--wcp-surface, #fff);
+  border: 2px solid var(--wcp-border-light);
+  border-radius: var(--wcp-radius-md);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+.wcp-ncw-mode:hover {
+  border-color: var(--wcp-accent, #2563eb);
+  background: var(--wcp-gray-50, #fafafa);
+}
+
+.wcp-ncw-mode-active {
+  border-color: var(--wcp-accent, #2563eb);
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.wcp-ncw-mode-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--wcp-gray-100, #f1f5f9);
+  color: var(--wcp-accent, #2563eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.wcp-ncw-mode-active .wcp-ncw-mode-icon {
+  background: var(--wcp-accent, #2563eb);
+  color: white;
+}
+
+.wcp-ncw-mode-title {
+  font-size: var(--wcp-font-size-base);
+  font-weight: 700;
+  color: var(--wcp-text-primary);
+}
+
+.wcp-ncw-mode-sub {
+  font-size: var(--wcp-font-size-sm);
+  color: var(--wcp-text-secondary);
+  line-height: 1.45;
+}
+
+/* ─────── Step 2 — Source fetch ─────── */
+
+.wcp-ncw-url-row {
+  display: flex;
+  gap: var(--wcp-space-2);
+  align-items: stretch;
+}
+
+.wcp-ncw-url-row .wcp-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.wcp-ncw-url-row .wcp-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.wcp-ncw-source-ok,
+.wcp-ncw-source-warn {
+  display: flex;
+  align-items: center;
+  gap: var(--wcp-space-2);
+  padding: 10px 14px;
+  border-radius: var(--wcp-radius-md);
+  font-size: var(--wcp-font-size-sm);
+  margin: var(--wcp-space-2) 0;
+}
+
+.wcp-ncw-source-ok {
+  background: var(--wcp-success-light, #ecfdf5);
+  color: var(--wcp-success, #059669);
+}
+
+.wcp-ncw-source-warn {
+  background: var(--wcp-warning-light, #fffbeb);
+  color: var(--wcp-warning, #d97706);
+}
+
+/* ─────── Step 4 — Draft preview ─────── */
+
+.wcp-ncw-draft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wcp-space-3);
+}
+
+.wcp-ncw-draft-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wcp-ncw-draft-label {
+  font-size: var(--wcp-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--wcp-text-muted);
+}
+
+.wcp-ncw-draft-title {
+  font-size: var(--wcp-font-size-lg);
+  font-weight: 700;
+}
+
+.wcp-ncw-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: -4px 0 4px;
+}
+
+.wcp-ncw-draft-hubrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wcp-ncw-draft-empty {
+  padding: 10px 12px;
+  background: var(--wcp-gray-50, #fafafa);
+  border: 1px dashed var(--wcp-border-light);
+  border-radius: var(--wcp-radius-md);
+  font-size: var(--wcp-font-size-sm);
+  color: var(--wcp-text-muted);
+}
+
+.wcp-ncw-draft-kw {
+  font-size: var(--wcp-font-size-sm);
+}
+
+.wcp-ncw-draft-kw-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.wcp-ncw-draft-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: var(--wcp-font-size-sm);
+  color: var(--wcp-text-primary);
+}
+
+.wcp-ncw-draft-list li { margin: 3px 0; }
+
+.wcp-ncw-draft-uvp {
+  padding: 10px 14px;
+  background: var(--wcp-gray-50, #fafafa);
+  border-left: 3px solid var(--wcp-accent, #2563eb);
+  border-radius: 4px;
+  font-size: var(--wcp-font-size-sm);
+  color: var(--wcp-text-primary);
+  font-style: italic;
+}
+
+.wcp-ncw-draft-refresh {
+  background: rgba(37, 99, 235, 0.04);
+  padding: var(--wcp-space-3);
+  border-radius: var(--wcp-radius-md);
+  border: 1px solid rgba(37, 99, 235, 0.15);
+}

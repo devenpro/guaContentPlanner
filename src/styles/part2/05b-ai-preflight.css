@@ -1,0 +1,79 @@
+/* ============================================================
+   AI PREFLIGHT MODAL
+   ============================================================ */
+
+.wcp-ai-preflight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wcp-space-3);
+}
+
+.wcp-ai-preflight-desc {
+  font-size: var(--wcp-font-size-sm);
+  color: var(--wcp-text-secondary);
+  padding: var(--wcp-space-2) var(--wcp-space-3);
+  background: var(--wcp-bg-soft, #f7f8fa);
+  border-left: 3px solid var(--wcp-accent);
+  border-radius: var(--wcp-radius-sm);
+}
+
+.wcp-ai-preflight .wcp-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--wcp-space-3);
+}
+
+.wcp-ai-preflight .wcp-form-half {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wcp-space-1);
+  min-width: 0;
+}
+
+.wcp-ai-preflight .wcp-form-label {
+  font-size: var(--wcp-font-size-xs);
+  font-weight: 600;
+  color: var(--wcp-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wcp-ai-preflight .wcp-form-hint {
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--wcp-text-muted);
+  font-size: var(--wcp-font-size-xs);
+  margin-left: var(--wcp-space-1);
+}
+
+.wcp-ai-preflight .wcp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wcp-space-1);
+}
+
+.wcp-ai-preflight-instructions {
+  width: 100%;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  font-size: var(--wcp-font-size-sm);
+}
+
+.wcp-aipf-provider-host,
+.wcp-aipf-model-host {
+  min-width: 0;
+}
+
+.wcp-aipf-run-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-right: var(--wcp-space-1);
+}
+
+@media (max-width: 600px) {
+  .wcp-ai-preflight .wcp-form-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,215 @@
+/* ═══════════════════════════════════════════════════════════
+   CONTENT LIST PANE — search / sort / group / filter controls
+   ═══════════════════════════════════════════════════════════ */
+
+/* Search wrapper — position: relative to anchor the X clear button */
+.wcp-content-pane .wcp-search-wrapper {
+  position: relative;
+}
+.wcp-search-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--wcp-text-muted);
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+.wcp-search-clear:hover { color: var(--wcp-text-primary); background: var(--wcp-gray-100); }
+
+/* Sort + Group row */
+.wcp-cl-sortgroup {
+  display: grid;
+  grid-template-columns: 1fr 32px 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+.wcp-cl-sortdir {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--wcp-border-light);
+  background: var(--wcp-white);
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--wcp-text-secondary);
+  padding: 0;
+}
+.wcp-cl-sortdir:hover {
+  border-color: var(--wcp-primary);
+  color: var(--wcp-primary);
+}
+
+/* Filter-pill count chip */
+.wcp-filter-pill-num {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 5px;
+  background: rgba(0,0,0,0.08);
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+.wcp-filter-pill-active .wcp-filter-pill-num {
+  background: rgba(255,255,255,0.25);
+}
+
+/* Filters disclosure toggle */
+.wcp-cl-filters-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 5px 10px;
+  background: transparent;
+  border: 1px solid var(--wcp-border-light);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--wcp-text-secondary);
+  cursor: pointer;
+  transition: border-color 0.1s ease, background 0.1s ease;
+}
+.wcp-cl-filters-toggle:hover {
+  border-color: var(--wcp-primary);
+  color: var(--wcp-primary);
+}
+.wcp-cl-filters-toggle.is-open {
+  background: var(--wcp-gray-50);
+  border-color: var(--wcp-primary);
+  color: var(--wcp-primary);
+}
+.wcp-cl-filters-toggle .wcp-cl-filters-chev {
+  transition: transform 0.18s ease;
+  font-size: 10px;
+  color: var(--wcp-text-muted);
+}
+.wcp-cl-filters-toggle.is-open .wcp-cl-filters-chev {
+  transform: rotate(180deg);
+  color: var(--wcp-primary);
+}
+.wcp-cl-filters-badge {
+  display: inline-block;
+  padding: 0 6px;
+  background: var(--wcp-primary);
+  color: var(--wcp-white);
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.wcp-cl-advanced-filters {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.22s ease, opacity 0.18s ease, margin 0.22s ease;
+  margin-top: 0;
+}
+.wcp-cl-advanced-filters.is-open {
+  max-height: 500px;
+  opacity: 1;
+  margin-top: 8px;
+}
+
+/* Active-filter chips row — appears only when at least one filter is applied */
+.wcp-cl-active-filters {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.wcp-cl-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--wcp-gray-50);
+  border: 1px solid var(--wcp-border-light);
+  border-radius: 12px;
+  padding: 2px 2px 2px 10px;
+  font-size: 11px;
+  color: var(--wcp-text-secondary);
+  max-width: 100%;
+  overflow: hidden;
+}
+.wcp-cl-filter-chip > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+.wcp-cl-filter-chip button {
+  background: transparent;
+  border: none;
+  color: var(--wcp-text-muted);
+  padding: 2px 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+}
+.wcp-cl-filter-chip button:hover {
+  background: var(--wcp-gray-200, var(--wcp-gray-100));
+  color: var(--wcp-error, #dc2626);
+}
+.wcp-cl-clear-all {
+  background: transparent;
+  border: none;
+  color: var(--wcp-primary);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 6px;
+  margin-left: 4px;
+  text-decoration: underline;
+}
+
+/* Group headers inside the list */
+.wcp-cl-group-header {
+  --grp-color: var(--wcp-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--wcp-gray-50);
+  border-top: 1px solid var(--wcp-border-light);
+  border-bottom: 1px solid var(--wcp-border-light);
+  margin-top: 6px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.wcp-cl-group-header:first-child { margin-top: 0; }
+.wcp-cl-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--grp-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wcp-cl-group-count {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  background: var(--wcp-white);
+  color: var(--wcp-text-secondary);
+  border-radius: 10px;
+  border: 1px solid var(--wcp-border-light);
+  flex-shrink: 0;
+}
+
+/* Priority chip dropdown — chip stays compact but menu escapes width */
+.wcp-cd-chip-priority .wcp-mselect-panel {
+  min-width: 240px;
+}

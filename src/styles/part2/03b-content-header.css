@@ -1,0 +1,421 @@
+/* ═══════════════════════════════════════════════════════════
+   CONTENT DETAIL HEADER — 2026-04 v4
+   Chip architecture:
+     .wcp-cd-chip (outer <div>) owns the chrome: border, bg, padding,
+     hover/focus. Every meta item uses this same wrapper.
+     Inside: .wcp-cd-chip-role (top label) + .wcp-cd-chip-value (bottom area
+     that holds a WcpSelect, a static element, or the status split-button).
+   ═══════════════════════════════════════════════════════════ */
+
+.wcp-cd-header {
+  position: sticky;
+  top: calc(var(--wcp-space-4) * -1);
+  z-index: 5;
+  background: var(--wcp-white);
+  padding: 18px 24px 16px;
+  margin: calc(var(--wcp-space-4) * -1) calc(var(--wcp-space-5) * -1) var(--wcp-space-4);
+  border-bottom: 1px solid var(--wcp-border-light);
+  transition: box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.wcp-detail-body.is-scrolled .wcp-cd-header { box-shadow: 0 2px 8px -4px rgba(15,23,42,0.14); }
+.wcp-cd-header-closed { background: var(--wcp-gray-50); }
+
+/* ── Row 1: title ── */
+.wcp-cd-title-row { display: flex; align-items: center; }
+.wcp-cd-title {
+  width: 100%;
+  font-family: var(--wcp-font-display);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--wcp-text-primary);
+  padding: 6px 10px;
+  margin: 0;
+  background: transparent;
+  border: 1.5px dashed transparent;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color var(--wcp-transition-fast), background var(--wcp-transition-fast), box-shadow var(--wcp-transition-fast);
+}
+.wcp-cd-title:hover { border-color: var(--wcp-border-light); background: var(--wcp-gray-50); }
+.wcp-cd-title:focus {
+  border-color: var(--wcp-primary);
+  border-style: solid;
+  background: var(--wcp-white);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+.wcp-cd-title::placeholder { color: var(--wcp-text-muted); font-weight: 600; }
+
+/* ── Row 2: meta strip ── */
+.wcp-cd-meta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 10px 12px;
+}
+.wcp-cd-meta-left  {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.wcp-cd-meta-right {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+}
+
+/* ══ CHIP — outer wrapper (chrome only) ══ */
+.wcp-cd-chip {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  box-sizing: border-box;
+  width: auto;
+  min-width: 150px;
+  min-height: 50px;
+  padding: 7px 12px;
+  background: var(--wcp-white);
+  border: 1px solid var(--wcp-border-light);
+  border-radius: 10px;
+  transition: border-color var(--wcp-transition-fast), background var(--wcp-transition-fast), box-shadow var(--wcp-transition-fast);
+  flex: 0 0 auto;
+  position: relative;
+}
+.wcp-cd-chip:hover { border-color: var(--wcp-border-default); background: var(--wcp-gray-50); }
+.wcp-cd-chip:focus-within,
+.wcp-cd-chip.is-open {
+  border-color: var(--wcp-primary);
+  background: var(--wcp-white);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+.wcp-cd-chip-disabled {
+  background: var(--wcp-gray-50);
+  opacity: 0.7;
+  pointer-events: none;
+}
+.wcp-cd-chip-disabled .wcp-cd-chip-value { cursor: not-allowed; }
+
+.wcp-cd-chip-role {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--wcp-text-muted);
+  line-height: 1.1;
+  user-select: none;
+}
+
+.wcp-cd-chip-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--wcp-text-primary);
+  line-height: 1.25;
+}
+
+/* ── WcpSelect inside a chip: fully transparent, no chrome, no box shadow.
+   The WcpSelect wrapper is position:static so the panel's absolute positioning
+   falls through to the chip — panel drops from the chip's bottom, not from
+   mid-chip. ── */
+.wcp-cd-chip .wcp-mselect,
+.wcp-cd-chip .wcp-mselect.wcp-cd-chip-select {
+  position: static;
+  display: block;
+  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+/* Chip dropdown — the chip itself stays narrow, but the open panel escapes
+   the chip's width so long option labels (type names, hub names, cluster
+   names) aren't truncated. min-width ensures readability; max-width caps
+   so it doesn't overflow the viewport on small screens. */
+.wcp-cd-chip .wcp-mselect-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: auto;
+  min-width: 320px;
+  max-width: min(520px, 90vw);
+  width: max-content;
+  z-index: 40;
+}
+.wcp-cd-chip .wcp-mselect-item {
+  white-space: normal;
+  line-height: 1.35;
+}
+.wcp-cd-chip .wcp-mselect-trigger {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  min-height: 0;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.wcp-cd-chip .wcp-mselect-trigger:hover { background: transparent; border-color: transparent; box-shadow: none; }
+.wcp-cd-chip .wcp-mselect-trigger:focus-visible { outline: none; box-shadow: none; }
+.wcp-cd-chip .wcp-mselect-trigger-content {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wcp-cd-chip .wcp-mselect-placeholder {
+  color: var(--wcp-text-muted);
+  font-style: italic;
+  font-weight: 500;
+}
+.wcp-cd-chip .wcp-mselect-chevron {
+  position: static;
+  transform: none;
+  font-size: 10px;
+  color: var(--wcp-text-muted);
+  flex-shrink: 0;
+  margin-left: 2px;
+  transition: transform var(--wcp-transition-fast), color var(--wcp-transition-fast);
+}
+.wcp-cd-chip .wcp-mselect.wcp-mselect-open .wcp-mselect-chevron {
+  transform: rotate(180deg);
+  color: var(--wcp-primary);
+}
+.wcp-cd-chip .wcp-mselect-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+}
+.wcp-cd-chip .wcp-mselect-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  flex-shrink: 0;
+  color: var(--wcp-text-secondary);
+  font-size: 12px;
+}
+
+/* ── Pillar chip — static content inside value ── */
+.wcp-cd-pillar-face {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wcp-cd-pillar-face i,
+.wcp-cd-pillar-face svg { color: var(--wcp-text-muted); font-size: 12px; flex-shrink: 0; }
+.wcp-cd-pillar-label { overflow: hidden; text-overflow: ellipsis; }
+
+.wcp-cd-chip-pillar-action { cursor: pointer; }
+.wcp-cd-chip-pillar-action:hover { border-color: var(--wcp-warning); background: rgba(217,119,6,0.06); }
+.wcp-cd-chip-pillar-action:hover .wcp-cd-pillar-face i,
+.wcp-cd-chip-pillar-action:hover .wcp-cd-pillar-face svg { color: var(--wcp-warning); }
+
+.wcp-cd-chip-pillar-active {
+  border-color: rgba(5,150,105,0.35);
+  background: rgba(5,150,105,0.06);
+}
+.wcp-cd-chip-pillar-active .wcp-cd-pillar-face i,
+.wcp-cd-chip-pillar-active .wcp-cd-pillar-face svg { color: #f59e0b; }
+.wcp-cd-chip-pillar-active .wcp-cd-pillar-label { color: var(--wcp-success); }
+
+/* ── Priority chip — icon-toggle group inside value ── */
+.wcp-cd-chip-priority .wcp-cd-chip-value { gap: 4px; }
+.wcp-cd-priority-group { display: inline-flex; gap: 4px; align-items: center; }
+.wcp-cd-priority-group .wcp-priority-option {
+  padding: 4px 9px;
+  min-height: 0;
+  font-size: 0;
+  line-height: 1;
+  border-width: 1px;
+  border-radius: 6px;
+}
+.wcp-cd-priority-group .wcp-priority-option i,
+.wcp-cd-priority-group .wcp-priority-option svg { font-size: 12px; }
+
+/* ══ STATUS chip — contains a split-button ══ */
+.wcp-cd-chip-status { padding: 7px 12px; }
+.wcp-cd-chip-status .wcp-cd-chip-value { gap: 0; }
+.wcp-cd-status-split {
+  display: inline-flex;
+  align-items: stretch;
+  height: 30px;
+  border: 1px solid color-mix(in srgb, var(--status-color) 40%, white);
+  background: color-mix(in srgb, var(--status-color) 10%, white);
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+}
+.wcp-cd-status-split:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--status-color) 22%, white);
+  border-color: var(--status-color);
+}
+
+.wcp-cd-status-face {
+  position: relative;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px 0 10px;
+  color: var(--status-color);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 0;
+  line-height: 1;
+}
+.wcp-cd-status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--status-color);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--status-color) 22%, white);
+}
+.wcp-cd-status-label { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wcp-cd-status-caret { font-size: 9px; opacity: 0.7; flex-shrink: 0; }
+
+/* Native <select> invisibly covers the face so a click opens the dropdown */
+.wcp-cd-status-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+}
+
+.wcp-cd-status-advance {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  flex-shrink: 0;
+  border: none;
+  border-left: 1px solid color-mix(in srgb, var(--status-color) 32%, white);
+  background: var(--status-color);
+  color: #fff;
+  cursor: pointer;
+  font-size: 10px;
+  padding: 0;
+  transition: filter var(--wcp-transition-fast);
+}
+.wcp-cd-status-advance:hover:not(:disabled) { filter: brightness(1.1); }
+.wcp-cd-status-advance:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
+.wcp-cd-status-advance:disabled {
+  background: var(--wcp-gray-100);
+  color: var(--wcp-text-muted);
+  cursor: not-allowed;
+  border-left-color: var(--wcp-border-light);
+}
+
+/* ── Overflow menu (⋮) — stays outside the chip system ── */
+.wcp-cd-overflow-wrap { position: relative; display: inline-flex; align-items: stretch; }
+.wcp-cd-overflow-btn {
+  width: 40px; min-height: 50px;
+  border-radius: 10px;
+  border: 1px solid var(--wcp-border-light);
+  background: var(--wcp-white);
+  color: var(--wcp-text-muted);
+  cursor: pointer;
+  transition: border-color var(--wcp-transition-fast), background var(--wcp-transition-fast);
+}
+.wcp-cd-overflow-btn:hover { border-color: var(--wcp-border-default); background: var(--wcp-gray-50); color: var(--wcp-text-primary); }
+.wcp-cd-overflow-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 40;
+  background: var(--wcp-white);
+  border: 1px solid var(--wcp-border-default);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px -12px rgba(15,23,42,0.22), 0 4px 8px -4px rgba(15,23,42,0.08);
+  min-width: 220px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: wcp-cd-overflow-in 120ms ease-out;
+}
+@keyframes wcp-cd-overflow-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+.wcp-cd-overflow-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: none;
+  background: transparent;
+  color: var(--wcp-text-primary);
+  font-family: var(--wcp-font-family);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background var(--wcp-transition-fast);
+}
+.wcp-cd-overflow-item:hover { background: var(--wcp-gray-50); }
+.wcp-cd-overflow-item:focus-visible { background: var(--wcp-gray-100); outline: none; }
+.wcp-cd-overflow-item i,
+.wcp-cd-overflow-item svg { width: 14px; color: var(--wcp-text-muted); }
+.wcp-cd-overflow-divider { height: 1px; background: var(--wcp-border-light); margin: 4px 0; }
+.wcp-cd-overflow-danger { color: var(--wcp-error); }
+.wcp-cd-overflow-danger:hover { background: var(--wcp-error-light); }
+.wcp-cd-overflow-danger i,
+.wcp-cd-overflow-danger svg { color: var(--wcp-error); }
+
+/* ── Rejected reason note ── */
+.wcp-cd-rejection-note {
+  padding: 10px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #991b1b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ══ Responsive ══ */
+@media (max-width: 960px) {
+  .wcp-cd-header { padding: 14px 16px 12px; }
+  .wcp-cd-title { font-size: 22px; }
+  .wcp-cd-meta-right { flex-basis: 100%; justify-content: flex-start; }
+}
+@media (max-width: 540px) {
+  .wcp-cd-chip { min-width: 0; flex: 1 1 calc(50% - 4px); }
+  .wcp-cd-chip-priority,
+  .wcp-cd-chip-status { flex-basis: 100%; }
+}

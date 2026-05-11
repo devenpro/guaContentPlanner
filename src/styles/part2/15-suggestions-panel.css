@@ -1,0 +1,108 @@
+/* ============================================================
+   Cluster Content Suggestions Panel
+   ============================================================
+   Opened by the "Suggest" button on each cluster card in the Hubs
+   view. Persists suggestions per-cluster so the user can return,
+   adopt more, delete unwanted ones, and see which ideas became
+   actual content.
+   ============================================================ */
+
+.wcp-cluster-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wcp-space-2);
+}
+
+.wcp-cs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--wcp-space-3);
+  flex-wrap: wrap;
+  padding-bottom: var(--wcp-space-3);
+  margin-bottom: var(--wcp-space-2);
+  border-bottom: 1px solid var(--wcp-border-light);
+}
+
+.wcp-cs-counts,
+.wcp-cs-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--wcp-space-2);
+  flex-wrap: wrap;
+}
+
+.wcp-cs-divider {
+  font-size: var(--wcp-font-size-xs);
+  font-weight: 600;
+  color: var(--wcp-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: var(--wcp-space-3) 0 var(--wcp-space-1);
+  padding: 0 var(--wcp-space-1);
+}
+
+.wcp-cs-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--wcp-space-3);
+  padding: 12px;
+  border: 1px solid var(--wcp-border-light);
+  border-radius: var(--wcp-radius-md);
+  background: var(--wcp-surface, #fff);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.wcp-cs-row:hover {
+  border-color: var(--wcp-accent, #2563eb);
+  background: var(--wcp-gray-50, #fafafa);
+}
+
+.wcp-cs-row-used {
+  opacity: 0.72;
+  background: var(--wcp-gray-50, #fafafa);
+}
+
+.wcp-cs-row-used:hover {
+  opacity: 0.92;
+}
+
+.wcp-cs-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.wcp-cs-title {
+  font-weight: 600;
+  font-size: var(--wcp-font-size-base);
+  color: var(--wcp-text-primary);
+  margin-bottom: 2px;
+}
+
+.wcp-cs-row-used .wcp-cs-title {
+  text-decoration: line-through;
+  text-decoration-color: var(--wcp-text-muted);
+  text-decoration-thickness: 1px;
+}
+
+.wcp-cs-rationale {
+  font-size: var(--wcp-font-size-sm);
+  color: var(--wcp-text-secondary);
+  margin-bottom: 6px;
+}
+
+.wcp-cs-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.wcp-cs-actions-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}

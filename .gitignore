@@ -1,0 +1,22 @@
+# Local Claude Code config
+.claude/
+
+# Local manual backups
+backups/
+
+# Dev/reference artifacts (kept local, not published)
+samples/
+references/
+
+# Editor / OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# Logs
+*.log
+
+# Node (defensive)
+node_modules/

@@ -1,0 +1,21 @@
+/* ═══ S5: RESEARCH PHASES ═══ */
+.wcp-research-phase { border: 1px solid var(--wcp-border-light); border-left: 3px solid var(--wcp-warning); border-radius: var(--wcp-radius-lg); padding: var(--wcp-space-5); margin-bottom: var(--wcp-space-4); background: var(--wcp-white); }
+.wcp-research-phase-header { display: flex; align-items: center; gap: var(--wcp-space-3); margin-bottom: var(--wcp-space-2); }
+.wcp-research-phase-header h3 { margin: 0; font-size: var(--wcp-font-size-base); }
+.wcp-phase-num { width: 28px; height: 28px; border-radius: 50%; background: var(--wcp-warning); color: var(--wcp-white); display: flex; align-items: center; justify-content: center; font-size: var(--wcp-font-size-sm); font-weight: 700; flex-shrink: 0; }
+.wcp-phase-num-2 { background: var(--wcp-accent); }
+.wcp-phase-num-3 { background: var(--wcp-primary); }
+.wcp-phase-num-4 { background: var(--wcp-coral); }
+.wcp-phase-locked { opacity: 0.5; border-style: dashed; border-left-color: var(--wcp-gray-300); }
+.wcp-research-input-row { display: flex; gap: var(--wcp-space-2); align-items: flex-end; margin-bottom: var(--wcp-space-3); }
+/* Radio list (angle/headline selection) */
+.wcp-radio-list { display: flex; flex-direction: column; gap: var(--wcp-space-2); margin-top: var(--wcp-space-3); }
+.wcp-radio-item { display: flex; align-items: flex-start; gap: var(--wcp-space-3); padding: var(--wcp-space-3) var(--wcp-space-4); background: var(--wcp-gray-50); border: 1px solid var(--wcp-border-light); border-radius: var(--wcp-radius-md); transition: all var(--wcp-transition-fast); cursor: pointer; }
+.wcp-radio-item:hover { border-color: var(--wcp-border-dark); }
+.wcp-radio-item-selected { background: var(--wcp-primary-light); border-color: var(--wcp-primary); }
+.wcp-radio { margin: 0; margin-top: 3px; flex-shrink: 0; cursor: pointer; }
+.wcp-radio-body { flex: 1; min-width: 0; }
+.wcp-radio-title { font-size: var(--wcp-font-size-sm); font-weight: 600; color: var(--wcp-text-primary); }
+.wcp-radio-desc { font-size: var(--wcp-font-size-xs); color: var(--wcp-text-secondary); margin-top: 2px; line-height: 1.5; }
+.wcp-radio-meta { display: flex; gap: var(--wcp-space-2); margin-top: var(--wcp-space-1); align-items: center; }
+

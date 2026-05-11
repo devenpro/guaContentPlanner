@@ -1,0 +1,224 @@
+/* ═══════════════════════════════════════════════════════════
+   CONTENT DETAIL BODY — 2026-04 redesign
+   Used by renderStepInfo in src/part2a/steps/01-step1-info.js.
+   Header lives in 03b-content-header.css; this file is the body only.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Canvas: .wcp-detail-body-v2 (Part 2A content-detail render path) gets a
+   soft gray so the white section cards in the body read as cards. The
+   sticky header stays white (see 03b-content-header.css). Other views that
+   reuse .wcp-detail-body keep the original white background. */
+.wcp-detail-body-v2 { background: var(--wcp-gray-50); }
+.wcp-cd-body { display: flex; flex-direction: column; gap: 16px; padding: 16px 0 24px; }
+
+/* Closed-state banner at top of body (archived / rejected) */
+.wcp-cd-closed-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--wcp-white);
+  border: 1px solid var(--wcp-border-light);
+  border-left: 4px solid var(--closed-color, var(--wcp-gray-300));
+  border-radius: 12px;
+}
+.wcp-cd-closed-banner-icon { font-size: 22px; color: var(--closed-color); flex-shrink: 0; }
+.wcp-cd-closed-banner-body { flex: 1; }
+.wcp-cd-closed-banner-body strong { color: var(--closed-color); }
+
+/* ── Section (Brief, Advanced, Export) ── */
+.wcp-cd-section {
+  background: var(--wcp-white);
+  border: 1px solid var(--wcp-border-light);
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.03);
+}
+/* Three-part section header: [title] [hint (grows)] [action (corner)].
+   The action slot holds optional right-aligned controls (e.g. AI Fill Brief +
+   its model picker). Section-local actions stay with the section, not as
+   standalone bars. */
+.wcp-cd-section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--wcp-border-light);
+}
+.wcp-cd-section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.wcp-cd-section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--wcp-primary-light);
+  color: var(--wcp-primary);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.wcp-cd-section-header h3 {
+  margin: 0;
+  font-family: var(--wcp-font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--wcp-text-primary);
+  letter-spacing: -0.01em;
+}
+.wcp-cd-section-hint {
+  font-size: 12px;
+  color: var(--wcp-text-muted);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wcp-cd-section-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+/* Action-slot selects + buttons — compact consistent height */
+.wcp-cd-section-action .wcp-btn-ai { height: 30px; }
+.wcp-cd-section-action select,
+.wcp-cd-section-action .wcp-select { height: 30px; padding: 4px 28px 4px 10px; font-size: 12px; min-height: 0; background-position: right 8px center; background-size: 12px 12px; max-width: 140px; }
+
+@media (max-width: 640px) {
+  .wcp-cd-section-header { flex-wrap: wrap; }
+  .wcp-cd-section-hint { flex-basis: 100%; order: 3; white-space: normal; }
+  .wcp-cd-section-action { order: 2; margin-left: auto; }
+}
+/* Collapsed Advanced toggle.
+   Note: 09-extras.css ships its own .wcp-info-section rules — these
+   11-content-view rules load later and supersede them for the content
+   detail's Advanced section. Explicit zero-rotation for collapsed state
+   overrides the -90deg rule from 09-extras. */
+.wcp-cd-section.wcp-info-section { padding: 0; overflow: hidden; }
+.wcp-cd-section.wcp-info-section .wcp-cd-section-header { padding: 14px 20px; margin-bottom: 0; border-bottom: 1px solid var(--wcp-border-light); cursor: pointer; user-select: none; transition: background var(--wcp-transition-fast); }
+.wcp-cd-section.wcp-info-section .wcp-cd-section-header:hover { background: var(--wcp-gray-50); }
+/* Collapse/expand — pure CSS transitions (no jQuery slideToggle). The body
+   is always rendered; its max-height + opacity + padding collapse to zero
+   when .wcp-info-collapsed is on the parent. First click always registers
+   (no JS/CSS race) and the transition is smooth. */
+.wcp-cd-section.wcp-info-section .wcp-info-section-body {
+  padding: 16px 20px 20px;
+  max-height: 2000px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.28s ease, opacity 0.18s ease, padding 0.28s ease;
+}
+.wcp-cd-section.wcp-info-section.wcp-info-collapsed .wcp-info-section-body {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.wcp-cd-section.wcp-info-section.wcp-info-collapsed .wcp-cd-section-header { border-bottom: none; }
+.wcp-info-chevron { margin-left: auto; transition: transform 0.22s ease; color: var(--wcp-text-muted); transform: rotate(180deg); }
+.wcp-cd-section.wcp-info-section.wcp-info-collapsed .wcp-info-chevron { transform: rotate(0deg); }
+
+/* ── 12-column field grid ── */
+.wcp-cd-fieldgrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+.wcp-cd-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.wcp-cd-col-6  { grid-column: span 6; }
+.wcp-cd-col-12 { grid-column: span 12; }
+
+.wcp-cd-field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--wcp-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.wcp-cd-field-label i,
+.wcp-cd-field-label svg { font-size: 11px; opacity: 0.75; color: var(--wcp-text-muted); }
+.wcp-cd-field-hint {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--wcp-text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+  padding: 1px 6px;
+  background: var(--wcp-gray-100);
+  border-radius: 4px;
+  margin-left: 4px;
+}
+
+/* View-first inputs inside the body — transparent until hover/focus */
+.wcp-cd-body .wcp-info-preview-field {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+.wcp-cd-body .wcp-info-preview-field:hover {
+  border-color: var(--wcp-border-light);
+  background: var(--wcp-gray-50);
+}
+.wcp-cd-body .wcp-info-preview-field:focus {
+  border-color: var(--wcp-primary);
+  background: var(--wcp-white);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+/* WcpSelect inside a body field — match the view-first pattern */
+.wcp-cd-field > .wcp-mselect > .wcp-mselect-trigger {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+.wcp-cd-field > .wcp-mselect > .wcp-mselect-trigger:hover {
+  border-color: var(--wcp-border-light);
+  background: var(--wcp-gray-50);
+}
+.wcp-cd-field > .wcp-mselect.wcp-mselect-open > .wcp-mselect-trigger,
+.wcp-cd-field > .wcp-mselect > .wcp-mselect-trigger:focus-visible {
+  background: var(--wcp-white);
+  border-color: var(--wcp-primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+/* Responsive: collapse grid to single column on narrow viewports */
+@media (max-width: 720px) {
+  .wcp-cd-section { padding: 16px; }
+  .wcp-cd-col-6  { grid-column: span 12; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Legacy compatibility — the old .wcp-cv-* classes are still used
+   by a few places (e.g. archived renders from cached state).
+   Keep minimal rules to avoid a flash of unstyled content.
+   ══════════════════════════════════════════════════════════════ */
+.wcp-cv { display: flex; flex-direction: column; gap: var(--wcp-space-5); padding: var(--wcp-space-2) 0; }
+.wcp-cv-section { padding: 0 var(--wcp-space-2); }
+.wcp-cv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--wcp-space-3) var(--wcp-space-5); }
+.wcp-cv-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.wcp-cv-field-wide { grid-column: 1 / -1; }
+.wcp-cv-field-label { display: inline-flex; align-items: center; gap: 6px; font-size: var(--wcp-font-size-xs); font-weight: 600; color: var(--wcp-text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.wcp-cv-export { border-top: 1px solid var(--wcp-border-light); padding-top: var(--wcp-space-5); margin-top: var(--wcp-space-2); }
+
+/* Priority pill compact (used by the header meta strip) */
+.wcp-priority-selector-compact { display: flex; gap: 4px; }
+.wcp-priority-selector-compact .wcp-priority-option { padding: 5px 10px; font-size: 0; line-height: 1; min-height: 0; }
+.wcp-priority-selector-compact .wcp-priority-option i,
+.wcp-priority-selector-compact .wcp-priority-option svg { font-size: 13px; }
+
+@media (max-width: 768px) {
+  .wcp-cv-grid { grid-template-columns: 1fr; }
+}

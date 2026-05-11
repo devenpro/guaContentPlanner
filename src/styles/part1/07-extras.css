@@ -1,0 +1,11 @@
+/* ═══ S27: HUB QUICK-ADD & COLLAPSIBLE ═══ */
+.wcp-hub-quick-add { display: flex; gap: var(--wcp-space-2); align-items: center; padding: var(--wcp-space-2) var(--wcp-space-3); background: var(--wcp-gray-50); border: 1.5px dashed var(--wcp-border-default); border-radius: var(--wcp-radius-md); margin-bottom: var(--wcp-space-3); }
+.wcp-hub-quick-add:focus-within { border-color: var(--wcp-primary); background: var(--wcp-white); }
+
+.wcp-collapsible-section { border: 1px solid var(--wcp-border-light); border-radius: var(--wcp-radius-md); overflow: hidden; }
+.wcp-collapsible-toggle { display: flex; align-items: center; justify-content: space-between; padding: var(--wcp-space-3) var(--wcp-space-4); cursor: pointer; user-select: none; transition: background var(--wcp-transition-fast); }
+.wcp-collapsible-toggle:hover { background: var(--wcp-gray-50); }
+.wcp-collapsible-toggle h3 { margin: 0; font-size: var(--wcp-font-size-sm); }
+.wcp-collapsible-chevron { color: var(--wcp-text-muted); transition: transform 0.2s ease; }
+.wcp-collapsible-open .wcp-collapsible-chevron { transform: rotate(180deg); }
+.wcp-collapsible-body { padding: 0 var(--wcp-space-4) var(--wcp-space-4); }

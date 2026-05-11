@@ -1,0 +1,31 @@
+/* ═══ S17: SETTINGS STYLES ═══ */
+.wcp-settings-panel { max-width: 720px; }
+.wcp-settings-section { background: var(--wcp-white); border: 1px solid var(--wcp-border-light); border-radius: var(--wcp-radius-lg); padding: var(--wcp-space-5); margin-bottom: var(--wcp-space-5); }
+.wcp-settings-section h3 { margin-bottom: var(--wcp-space-4); display: flex; align-items: center; gap: var(--wcp-space-2); }
+.wcp-settings-actions { display: flex; gap: var(--wcp-space-3); margin-top: var(--wcp-space-5); padding-top: var(--wcp-space-4); border-top: 1px solid var(--wcp-border-light); flex-wrap: wrap; }
+.wcp-config-list { display: flex; flex-direction: column; gap: var(--wcp-space-2); margin-top: var(--wcp-space-3); }
+.wcp-config-item { display: flex; align-items: center; gap: var(--wcp-space-3); padding: var(--wcp-space-2) var(--wcp-space-3); background: var(--wcp-gray-50); border: 1px solid var(--wcp-border-light); border-radius: var(--wcp-radius-md); transition: border-color var(--wcp-transition-fast); }
+.wcp-config-item:hover { border-color: var(--wcp-border-default); }
+.wcp-config-item-name { font-weight: 600; font-size: var(--wcp-font-size-sm); flex: 1; min-width: 0; }
+/* Provider cards */
+.wcp-provider-card { background: var(--wcp-white); border: 1px solid var(--wcp-border-light); border-radius: var(--wcp-radius-lg); padding: var(--wcp-space-5); margin-bottom: var(--wcp-space-4); }
+.wcp-provider-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--wcp-space-3); }
+.wcp-provider-name { font-size: var(--wcp-font-size-base); font-weight: 700; display: flex; align-items: center; gap: var(--wcp-space-2); }
+.wcp-provider-key { font-family: var(--wcp-font-mono); font-size: var(--wcp-font-size-xs); color: var(--wcp-coral); background: var(--wcp-coral-light); padding: 2px 8px; border-radius: var(--wcp-space-1); }
+.wcp-model-row { display: flex; align-items: center; gap: var(--wcp-space-3); padding: var(--wcp-space-2) var(--wcp-space-3); background: var(--wcp-gray-50); border-radius: var(--wcp-radius-md); margin-bottom: var(--wcp-space-2); }
+.wcp-model-row:last-child { margin-bottom: 0; }
+.wcp-model-name { flex: 1; font-size: var(--wcp-font-size-sm); font-weight: 500; color: var(--wcp-text-primary); }
+.wcp-model-default { color: var(--wcp-warning); font-size: var(--wcp-font-size-sm); }
+.wcp-model-meta { font-size: var(--wcp-font-size-xs); color: var(--wcp-text-muted); }
+
+/* ═══ S18: SECTION EDIT MODAL ═══ */
+.wcp-section-edit { display: flex; flex-direction: column; gap: var(--wcp-space-3); }
+.wcp-section-type-selector { display: flex; gap: var(--wcp-space-1); flex-wrap: wrap; }
+.wcp-section-type-btn { padding: 4px 12px; border: 1.5px solid var(--wcp-border-default); border-radius: var(--wcp-radius-full); font-size: var(--wcp-font-size-xs); font-weight: 600; font-family: var(--wcp-font-family); cursor: pointer; background: var(--wcp-white); color: var(--wcp-text-secondary); transition: all var(--wcp-transition-fast); }
+.wcp-section-type-btn:hover { border-color: var(--wcp-teal); color: var(--wcp-teal); }
+.wcp-section-type-btn-active { background: var(--wcp-teal); border-color: var(--wcp-teal); color: var(--wcp-white) !important; }
+.wcp-level-selector { display: flex; gap: var(--wcp-space-1); }
+.wcp-level-btn { width: 36px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--wcp-border-default); border-radius: var(--wcp-radius-sm); font-size: var(--wcp-font-size-xs); font-weight: 700; font-family: var(--wcp-font-family); cursor: pointer; background: var(--wcp-white); color: var(--wcp-text-secondary); transition: all var(--wcp-transition-fast); }
+.wcp-level-btn:hover { border-color: var(--wcp-primary); color: var(--wcp-primary); }
+.wcp-level-btn-active { background: var(--wcp-primary); border-color: var(--wcp-primary); color: var(--wcp-white) !important; }
+

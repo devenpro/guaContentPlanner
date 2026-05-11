@@ -1,0 +1,73 @@
+/**
+ * Website Content Planner v1.0 - Part 1: Core Styles
+ * GoUltra AI Design System — Prefix: wcp-
+ * 24 sections, 4 breakpoints
+ * @version 1.0.0
+ */
+
+/* ═══ S1: VARIABLES ═══ */
+:root {
+  /* Brand colors */
+  --wcp-primary: #2563eb; --wcp-primary-hover: #1d4ed8; --wcp-primary-light: #eff6ff;
+  --wcp-primary-dark: #1e40af; --wcp-primary-subtle: #f5f8ff;
+  --wcp-secondary: #059669; --wcp-secondary-light: #ecfdf5;
+  --wcp-accent: #7c3aed; --wcp-accent-light: #f3f0ff;
+  --wcp-accent-gradient: linear-gradient(135deg, #7c3aed, #6d28d9);
+  /* Semantic colors */
+  --wcp-success: #059669; --wcp-success-light: #ecfdf5;
+  --wcp-warning: #d97706; --wcp-warning-light: #fffbeb;
+  --wcp-error: #dc2626; --wcp-error-light: #fef2f2;
+  --wcp-info: #2563eb; --wcp-info-light: #eff6ff;
+  /* Domain colors — hub/cluster/content/AEO */
+  --wcp-hub: #2563eb; --wcp-hub-light: #eff6ff;
+  --wcp-cluster: #7c3aed; --wcp-cluster-light: #f3f0ff;
+  --wcp-content: #059669; --wcp-content-light: #ecfdf5;
+  --wcp-coral: #e85d3a; --wcp-coral-light: #fff4f0;
+  --wcp-teal: #0d9488; --wcp-teal-light: #f0fdfa;
+  --wcp-pink: #d946a8; --wcp-pink-light: #fdf2f9;
+  /* Grays */
+  --wcp-white: #ffffff; --wcp-gray-50: #f8f9fa; --wcp-gray-100: #f1f3f4;
+  --wcp-gray-200: #e8eaed; --wcp-gray-300: #dadce0; --wcp-gray-400: #bdc1c6;
+  --wcp-gray-500: #9aa0a6; --wcp-gray-600: #80868b; --wcp-gray-700: #5f6368;
+  --wcp-gray-800: #3c4043; --wcp-gray-900: #202124;
+  /* Semantic backgrounds */
+  --wcp-bg-primary: #ffffff; --wcp-bg-secondary: #f8f9fb; --wcp-bg-tertiary: #f1f3f4;
+  /* Semantic text */
+  --wcp-text-primary: #202124; --wcp-text-secondary: #5f6368; --wcp-text-tertiary: #80868b;
+  --wcp-text-muted: #9aa0a6; --wcp-text-inverse: #ffffff;
+  /* Borders */
+  --wcp-border-light: #e8eaed; --wcp-border-default: #dadce0; --wcp-border-dark: #bdc1c6;
+  --wcp-border-focus: #2563eb;
+  /* Shadows */
+  --wcp-shadow-xs: 0 1px 2px rgba(60,64,67,0.08);
+  --wcp-shadow-sm: 0 1px 3px rgba(60,64,67,0.12), 0 1px 2px rgba(60,64,67,0.06);
+  --wcp-shadow-md: 0 4px 6px rgba(60,64,67,0.1), 0 2px 4px rgba(60,64,67,0.06);
+  --wcp-shadow-lg: 0 10px 20px rgba(60,64,67,0.1), 0 4px 8px rgba(60,64,67,0.06);
+  --wcp-shadow-xl: 0 20px 40px rgba(60,64,67,0.12), 0 8px 16px rgba(60,64,67,0.08);
+  --wcp-shadow-glow: 0 0 0 4px rgba(37,99,235,0.15);
+  --wcp-shadow-glow-purple: 0 0 0 4px rgba(124,58,237,0.15);
+  /* Radius */
+  --wcp-radius-sm: 6px; --wcp-radius-md: 10px; --wcp-radius-lg: 16px;
+  --wcp-radius-xl: 24px; --wcp-radius-full: 9999px;
+  /* Spacing */
+  --wcp-space-1: 4px; --wcp-space-2: 8px; --wcp-space-3: 12px; --wcp-space-4: 16px;
+  --wcp-space-5: 20px; --wcp-space-6: 24px; --wcp-space-8: 32px; --wcp-space-10: 40px;
+  /* Typography */
+  --wcp-font-family: 'DM Sans', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  --wcp-font-display: 'Plus Jakarta Sans', 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --wcp-font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --wcp-font-size-xs: 11px; --wcp-font-size-sm: 13px; --wcp-font-size-base: 14px;
+  --wcp-font-size-md: 15px; --wcp-font-size-lg: 16px; --wcp-font-size-xl: 18px;
+  --wcp-font-size-2xl: 20px; --wcp-font-size-3xl: 24px; --wcp-font-size-4xl: 30px;
+  /* Transitions */
+  --wcp-transition-fast: 0.15s cubic-bezier(0.4,0,0.2,1);
+  --wcp-transition-base: 0.25s cubic-bezier(0.4,0,0.2,1);
+  /* Layout dimensions */
+  --wcp-sidebar-width: 210px; --wcp-sidebar-collapsed: 56px;
+  --wcp-header-height: 52px;
+  --wcp-list-pane-width: 320px;
+  /* Z-index scale */
+  --wcp-z-sidebar: 100; --wcp-z-header: 110; --wcp-z-dropdown: 200;
+  --wcp-z-overlay: 300; --wcp-z-modal: 1000; --wcp-z-confirm: 1100; --wcp-z-toast: 10000;
+}
+
