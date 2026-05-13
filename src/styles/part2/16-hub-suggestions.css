@@ -17,8 +17,8 @@
 }
 
 .wcp-hs-card:hover {
-  border-color: var(--wcp-accent, #2563eb);
-  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.08);
+  border-color: var(--wcp-accent, #7c3aed);
+  box-shadow: 0 1px 4px rgba(26, 115, 232, 0.08);
 }
 
 .wcp-hs-header {
@@ -57,8 +57,8 @@
   color: var(--wcp-text-muted);
   font-style: italic;
   padding: 6px 10px;
-  background: var(--wcp-gray-50, #f7f7f8);
-  border-left: 3px solid var(--wcp-accent, #2563eb);
+  background: var(--wcp-gray-50, #f8f9fa);
+  border-left: 3px solid var(--wcp-accent, #7c3aed);
   border-radius: 4px;
   margin: var(--wcp-space-2) 0;
 }
@@ -115,7 +115,7 @@
   margin: var(--wcp-space-3) 0;
   border: 1px solid var(--wcp-border-light);
   border-radius: var(--wcp-radius-md);
-  background: var(--wcp-gray-50, #fafafa);
+  background: var(--wcp-gray-50, #f8f9fa);
   padding: 0;
 }
 
@@ -149,7 +149,7 @@
 }
 
 .wcp-hs-count {
-  background: var(--wcp-accent, #2563eb);
+  background: var(--wcp-accent, #7c3aed);
   color: white;
   font-size: 11px;
   font-weight: 700;
@@ -179,7 +179,7 @@
 }
 
 .wcp-hs-cluster-row:hover {
-  border-color: var(--wcp-accent, #2563eb);
+  border-color: var(--wcp-accent, #7c3aed);
 }
 
 .wcp-hs-cluster-cb {

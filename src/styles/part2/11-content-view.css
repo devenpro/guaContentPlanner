@@ -174,7 +174,7 @@
 .wcp-cd-body .wcp-info-preview-field:focus {
   border-color: var(--wcp-primary);
   background: var(--wcp-white);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
 }
 
 /* WcpSelect inside a body field — match the view-first pattern */
@@ -191,7 +191,7 @@
 .wcp-cd-field > .wcp-mselect > .wcp-mselect-trigger:focus-visible {
   background: var(--wcp-white);
   border-color: var(--wcp-primary);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
 }
 
 /* Responsive: collapse grid to single column on narrow viewports */

@@ -1,7 +1,7 @@
 /* ═══ S8: BUTTONS ═══ */
 .wcp-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--wcp-space-2); padding: 8px 18px; min-height: 38px; font-size: var(--wcp-font-size-sm); font-weight: 600; font-family: var(--wcp-font-family); border: 1px solid var(--wcp-border-default); border-radius: var(--wcp-radius-full); background: var(--wcp-white); color: var(--wcp-text-primary); cursor: pointer; transition: all var(--wcp-transition-fast); line-height: 1.4; white-space: nowrap; user-select: none; }
 .wcp-btn:hover { border-color: var(--wcp-border-dark); box-shadow: var(--wcp-shadow-sm); transform: translateY(-1px); }
-.wcp-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(37,99,235,0.18); border-color: var(--wcp-primary); }
+.wcp-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(26,115,232,0.18); border-color: var(--wcp-primary); }
 .wcp-btn:active { transform: translateY(0); box-shadow: none; }
 .wcp-btn:disabled, .wcp-btn[disabled] { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
 .wcp-btn-primary { background: var(--wcp-primary); color: var(--wcp-text-inverse); border-color: var(--wcp-primary); }
@@ -47,7 +47,7 @@
 .wcp-input:focus, .wcp-select:focus, .wcp-textarea:focus {
   outline: none;
   border-color: var(--wcp-primary);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
   background: var(--wcp-white);
 }
 .wcp-input:disabled, .wcp-select:disabled, .wcp-textarea:disabled { background: var(--wcp-gray-50); color: var(--wcp-text-muted); cursor: not-allowed; }

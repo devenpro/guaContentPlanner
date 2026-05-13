@@ -7,29 +7,57 @@
 
 /* ═══ S1: VARIABLES ═══ */
 :root {
-  /* Brand colors */
-  --wcp-primary: #2563eb; --wcp-primary-hover: #1d4ed8; --wcp-primary-light: #eff6ff;
-  --wcp-primary-dark: #1e40af; --wcp-primary-subtle: #f5f8ff;
-  --wcp-secondary: #059669; --wcp-secondary-light: #ecfdf5;
+  /* Brand tokens (Go Ultra AI design system — see docs/04-design-system.md).
+     App tokens below alias these. Always include a hex fallback in case the
+     brand tokens aren't loaded (Drupal occasionally drops custom-property
+     resolution). */
+  --gua-primary: #1a73e8;
+  --gua-primary-hover: #1557b0;
+  --gua-primary-light: #e8f0fe;
+  --gua-primary-subtle: #f0f6ff;
+  --gua-accent-start: #f77062;
+  --gua-accent-mid:   #fe5196;
+  --gua-accent-end:   #bc4cf4;
+  --gua-gradient: linear-gradient(135deg, var(--gua-accent-start, #f77062), var(--gua-accent-mid, #fe5196), var(--gua-accent-end, #bc4cf4));
+  --gua-success: #0d904f; --gua-success-light: #e6f4ea;
+  --gua-warning: #e37400; --gua-warning-light: #fef7e0;
+  --gua-error:   #d93025; --gua-error-light:   #fce8e6;
+  --gua-info:    #1a73e8; --gua-info-light:    #e8f0fe;
+  --gua-white: #ffffff;
+  --gua-gray-50:  #f8f9fa; --gua-gray-100: #f1f3f4;
+  --gua-gray-200: #e8eaed; --gua-gray-300: #dadce0;
+  --gua-gray-400: #bdc1c6; --gua-gray-500: #9aa0a6;
+  --gua-gray-600: #80868b; --gua-gray-700: #5f6368;
+  --gua-gray-800: #3c4043; --gua-gray-900: #202124;
+
+  /* Brand colors (app aliases) */
+  --wcp-primary: var(--gua-primary, #1a73e8); --wcp-primary-hover: var(--gua-primary-hover, #1557b0); --wcp-primary-light: var(--gua-primary-light, #e8f0fe);
+  --wcp-primary-dark: #1557b0; --wcp-primary-subtle: var(--gua-primary-subtle, #f0f6ff);
+  --wcp-secondary: var(--gua-success, #0d904f); --wcp-secondary-light: var(--gua-success-light, #e6f4ea);
   --wcp-accent: #7c3aed; --wcp-accent-light: #f3f0ff;
-  --wcp-accent-gradient: linear-gradient(135deg, #7c3aed, #6d28d9);
+  /* Brand "punctuation" gradient (coral→pink→violet) — use sparingly per guide */
+  --wcp-accent-gradient: var(--gua-gradient);
+  /* Calmer in-shell gradient (sidebar brand block, decorative chrome) */
+  --wcp-shell-gradient: linear-gradient(135deg, var(--wcp-primary, #1a73e8), var(--wcp-accent, #7c3aed));
   /* Semantic colors */
-  --wcp-success: #059669; --wcp-success-light: #ecfdf5;
-  --wcp-warning: #d97706; --wcp-warning-light: #fffbeb;
-  --wcp-error: #dc2626; --wcp-error-light: #fef2f2;
-  --wcp-info: #2563eb; --wcp-info-light: #eff6ff;
-  /* Domain colors — hub/cluster/content/AEO */
-  --wcp-hub: #2563eb; --wcp-hub-light: #eff6ff;
+  --wcp-success: var(--gua-success, #0d904f); --wcp-success-light: var(--gua-success-light, #e6f4ea);
+  --wcp-warning: var(--gua-warning, #e37400); --wcp-warning-light: var(--gua-warning-light, #fef7e0);
+  --wcp-error:   var(--gua-error,   #d93025); --wcp-error-light:   var(--gua-error-light,   #fce8e6);
+  --wcp-info:    var(--gua-info,    #1a73e8); --wcp-info-light:    var(--gua-info-light,    #e8f0fe);
+  /* Domain colors — hub/cluster/content/AEO (app-specific, no brand equivalent) */
+  --wcp-hub: #1a73e8; --wcp-hub-light: #e8f0fe;
   --wcp-cluster: #7c3aed; --wcp-cluster-light: #f3f0ff;
-  --wcp-content: #059669; --wcp-content-light: #ecfdf5;
+  --wcp-content: #0d904f; --wcp-content-light: #e6f4ea;
   --wcp-coral: #e85d3a; --wcp-coral-light: #fff4f0;
   --wcp-teal: #0d9488; --wcp-teal-light: #f0fdfa;
   --wcp-pink: #d946a8; --wcp-pink-light: #fdf2f9;
-  /* Grays */
-  --wcp-white: #ffffff; --wcp-gray-50: #f8f9fa; --wcp-gray-100: #f1f3f4;
-  --wcp-gray-200: #e8eaed; --wcp-gray-300: #dadce0; --wcp-gray-400: #bdc1c6;
-  --wcp-gray-500: #9aa0a6; --wcp-gray-600: #80868b; --wcp-gray-700: #5f6368;
-  --wcp-gray-800: #3c4043; --wcp-gray-900: #202124;
+  /* Grays (app aliases of the brand grey scale) */
+  --wcp-white: var(--gua-white, #ffffff);
+  --wcp-gray-50:  var(--gua-gray-50,  #f8f9fa); --wcp-gray-100: var(--gua-gray-100, #f1f3f4);
+  --wcp-gray-200: var(--gua-gray-200, #e8eaed); --wcp-gray-300: var(--gua-gray-300, #dadce0);
+  --wcp-gray-400: var(--gua-gray-400, #bdc1c6); --wcp-gray-500: var(--gua-gray-500, #9aa0a6);
+  --wcp-gray-600: var(--gua-gray-600, #80868b); --wcp-gray-700: var(--gua-gray-700, #5f6368);
+  --wcp-gray-800: var(--gua-gray-800, #3c4043); --wcp-gray-900: var(--gua-gray-900, #202124);
   /* Semantic backgrounds */
   --wcp-bg-primary: #ffffff; --wcp-bg-secondary: #f8f9fb; --wcp-bg-tertiary: #f1f3f4;
   /* Semantic text */
@@ -37,14 +65,14 @@
   --wcp-text-muted: #9aa0a6; --wcp-text-inverse: #ffffff;
   /* Borders */
   --wcp-border-light: #e8eaed; --wcp-border-default: #dadce0; --wcp-border-dark: #bdc1c6;
-  --wcp-border-focus: #2563eb;
+  --wcp-border-focus: #1a73e8;
   /* Shadows */
   --wcp-shadow-xs: 0 1px 2px rgba(60,64,67,0.08);
   --wcp-shadow-sm: 0 1px 3px rgba(60,64,67,0.12), 0 1px 2px rgba(60,64,67,0.06);
   --wcp-shadow-md: 0 4px 6px rgba(60,64,67,0.1), 0 2px 4px rgba(60,64,67,0.06);
   --wcp-shadow-lg: 0 10px 20px rgba(60,64,67,0.1), 0 4px 8px rgba(60,64,67,0.06);
   --wcp-shadow-xl: 0 20px 40px rgba(60,64,67,0.12), 0 8px 16px rgba(60,64,67,0.08);
-  --wcp-shadow-glow: 0 0 0 4px rgba(37,99,235,0.15);
+  --wcp-shadow-glow: 0 0 0 4px rgba(26,115,232,0.15);
   --wcp-shadow-glow-purple: 0 0 0 4px rgba(124,58,237,0.15);
   /* Radius */
   --wcp-radius-sm: 6px; --wcp-radius-md: 10px; --wcp-radius-lg: 16px;
