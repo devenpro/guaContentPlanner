@@ -77,12 +77,10 @@
       for (var key in APP_VIEWS) {
         var v = APP_VIEWS[key];
         if (v.group !== group) continue;
-        var active = (S.currentView === key || (S.currentView === 'hub-detail' && key === 'hubs')) ? ' wcp-nav-item-active' : '';
+        var active = (S.currentView === key) ? ' wcp-nav-item-active' : '';
         var navBadge = '';
         if (key === 'hubs') navBadge = S.totalHubs > 0 ? '<span class="wcp-nav-badge">' + S.totalHubs + '</span>' : '';
         else if (key === 'content') navBadge = S.totalContent > 0 ? '<span class="wcp-nav-badge">' + S.totalContent + '</span>' : '';
-        else if (key === 'tags') navBadge = (S.data.tags || []).length > 0 ? '<span class="wcp-nav-badge">' + (S.data.tags || []).length + '</span>' : '';
-        else if (key === 'images') navBadge = S.images.length > 0 ? '<span class="wcp-nav-badge">' + S.images.length + '</span>' : '';
         html += '<a href="#' + key + '" class="wcp-nav-item' + active + '" data-view="' + key + '">';
         html += '<span class="wcp-nav-icon">' + icon(v.icon) + '</span>';
         html += '<span class="wcp-nav-label">' + esc(v.label) + '</span>';

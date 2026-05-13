@@ -22,11 +22,8 @@
     ll.selectedContentId      = S.selectedContentId || null;
     ll.selectedHubId          = S.selectedHubId || null;
     ll.selectedTemplateId     = S.selectedTemplateId || null;
-    ll.selectedTagId          = S.selectedTagId || null;
-    ll.selectedImageId        = S.selectedImageId || null;
     ll.selectedSitemapPageId  = S.selectedSitemapPageId || null;
     ll.currentStep            = S.currentStep || 'info';
-    ll.hubDetailTab           = S.hubDetailTab || 'tree';
     ll.settingsTab            = S.settingsTab || 'workspace';
     ll.researchTab            = S.researchTab || 'keywords';
     ll.savedAt                = new Date().toISOString();
@@ -54,12 +51,6 @@
     if (ll.selectedTemplateId && S.templateMap && S.templateMap[ll.selectedTemplateId]) {
       S.selectedTemplateId = ll.selectedTemplateId;
     }
-    if (ll.selectedTagId && S.tagMap && S.tagMap[ll.selectedTagId]) {
-      S.selectedTagId = ll.selectedTagId;
-    }
-    if (ll.selectedImageId && S.imageMap && S.imageMap[ll.selectedImageId]) {
-      S.selectedImageId = ll.selectedImageId;
-    }
     if (ll.selectedSitemapPageId && S.sitemapPageMap && S.sitemapPageMap[ll.selectedSitemapPageId]) {
       S.selectedSitemapPageId = ll.selectedSitemapPageId;
     }
@@ -72,7 +63,6 @@
     }
 
     // Sub-tabs: free-form strings, restore as-is if present.
-    if (ll.hubDetailTab) S.hubDetailTab = ll.hubDetailTab;
     if (ll.settingsTab)  S.settingsTab  = ll.settingsTab;
     if (ll.researchTab)  S.researchTab  = ll.researchTab;
   }

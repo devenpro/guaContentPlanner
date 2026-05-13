@@ -70,11 +70,6 @@
       if (cwLinks[cwli].planner_id) S.contentWriterMap[cwLinks[cwli].planner_id] = cwLinks[cwli];
     }
 
-    // Image category map
-    S.imageCategoryMap = {};
-    var cats = (S.meta && S.meta.image_categories) || [];
-    for (var cci = 0; cci < cats.length; cci++) S.imageCategoryMap[cats[cci].id] = cats[cci];
-
     // Sitemap maps — page by id + by canonical url, group by id.
     // sitemapLinksByTo / sitemapLinksByFrom are cached counts used to render
     // inbound/outbound pills in the sitemap view without re-scanning the

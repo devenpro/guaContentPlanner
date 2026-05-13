@@ -47,7 +47,6 @@
       outline: { sections: [], approved: false },
       aeo_gseo: { schema_types: [], qa_blocks: [], citation_score: 0, ai_overview_score: 0, eeat_status: {}, seo_score: 0, gseo_score: 0, aeo_score: 0 },
       internal_links: [],
-      media_brief: { image_concepts: [], style_references: [], brand_image_ids: [] },
       export: { exported_at: '', cw_node_id: '', export_version: '', writing_instructions: '' },
       tags: data.tags || [],
       created: now, updated: now,

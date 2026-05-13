@@ -10,7 +10,7 @@
   var badge, statusBadge, priorityBadge, scoreBadge, progressBar;
   var getHubClusters, getHubContent, getClusterContent;
   var getContentType, getTemplate, getAllTags, resolveTag;
-  var getRecentActivity, getImages;
+  var getRecentActivity;
   var evaluateAutoStatus, maybeAdvanceStatus, advanceContentStatus, nextQuickAdvanceStatus;
   var assignContentToCluster, assignContentToHub, clearHubPillarReferences, setContentAsHubPillar;
   var createHub, createCluster, createContent, saveContentField;
@@ -79,7 +79,6 @@
     getAllTags       = window._wcpGetAllTags;
     resolveTag      = window._wcpResolveTag;
     getRecentActivity = window._wcpGetRecentActivity;
-    getImages       = window._wcpGetImages;
 
     // ── Import status logic ──
     evaluateAutoStatus     = window._wcpEvaluateAutoStatus;
@@ -147,10 +146,8 @@
       openNewContentModal: openNewContentModal,
       openEditHubModal: openEditHubModal,
       openEditClusterModal: openEditClusterModal,
-      openNewTagModal: openNewTagModal, openEditTagModal: openEditTagModal,
       deleteContentConfirm: deleteContentConfirm,
       deleteHubConfirm: deleteHubConfirm, deleteClusterConfirm: deleteClusterConfirm,
-      deleteTagConfirm: deleteTagConfirm,
       duplicateContent: duplicateContent,
       openEditTypeModal: openEditTypeModal, openEditTemplateModal: openEditTemplateModal
     };

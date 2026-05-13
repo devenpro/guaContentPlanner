@@ -943,16 +943,6 @@
       deleteClusterConfirm($(this).data('id'));
     });
 
-    // Override: Create tag
-    $(document).off('click.wcp-create-tag').on('click.wcp-create-tag', '[data-action="create-tag"]', function() {
-      openNewTagModal();
-    });
-
-    // Override: Edit tag
-    $(document).off('click.wcp-edit-tag').on('click.wcp-edit-tag', '[data-action="edit-tag"]', function() {
-      openEditTagModal($(this).data('id'));
-    });
-
     // Override: Create pillar (modal instead of prompt).
     // Previously this opened the new-content modal with no post-create hook —
     // so the created content was never assigned as the hub's pillar, and the
@@ -1220,12 +1210,6 @@
     // Uses the shared setupTemplateSectionEvents() helper so all handlers
     // (add / remove / edit-toggle / native HTML5 drag-drop) stay in one place.
     setupTemplateSectionEvents();
-
-    // Override: Delete tag (confirm dialog)
-    $(document).off('click.wcp-delete-tag').on('click.wcp-delete-tag', '[data-action="delete-tag"]', function(e) {
-      e.stopPropagation();
-      deleteTagConfirm($(this).data('id'));
-    });
 
     // Override: Delete template (confirm dialog instead of confirm())
     $(document).off('click.wcp-delete-template').on('click.wcp-delete-template', '[data-action="delete-template"]', function(e) {

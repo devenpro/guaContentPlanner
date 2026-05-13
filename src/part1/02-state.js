@@ -17,7 +17,7 @@
     // UI state
     currentView: 'dashboard', previousView: null,
     selectedContentId: null, currentStep: 'info',
-    selectedHubId: null, selectedTemplateId: null, hubDetailTab: 'tree',
+    selectedHubId: null, selectedTemplateId: null,
     settingsTab: 'workspace', researchMode: 'keywords',
     // Sequential research flow state
     researchFlow: { step: 1, sessionId: '', topics: {}, selectedTopics: [] },
@@ -25,15 +25,9 @@
     contentFilter: { search: '', statuses: [], type: '', hub: '', tag: '', sortBy: 'updated', sortDir: 'desc', showClosed: false, groupBy: 'none', advancedOpen: false },
     // Activity view state
     activityFilter: { search: '', type: '' },
-    // Tags view state
-    selectedTagId: null,
     // Content Writer integration
     contentWriterItems: [], contentWriterMap: {},
     brandId: '', nodeId: '',
-    // Images view state
-    images: [], imageMap: {}, $imageField: null,
-    selectedImageId: null,
-    imageFilter: { search: '', category: '', tag: '', star: false, sort: 'newest' },
     // Shell UI
     sidebarCollapsed: false,
     // Drupal refs + flags

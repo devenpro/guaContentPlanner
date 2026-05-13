@@ -294,6 +294,12 @@
       $('#wcpContentList').html(renderContentListItems());
     });
 
+    // Content tag filter
+    $(document).off('change.wcp-filter-tag').on('change.wcp-filter-tag', '#wcpFilterTag', function() {
+      S.contentFilter.tag = $(this).val() || '';
+      $('#wcpContentList').html(renderContentListItems());
+    });
+
     // Content search
     $(document).off('input.wcp-search-content').on('input.wcp-search-content', '#wcpContentSearch', debounce(function() {
       S.contentFilter.search = $(this).val() || '';
@@ -338,6 +344,7 @@
       if (key === 'search')   S.contentFilter.search = '';
       else if (key === 'type')  S.contentFilter.type = '';
       else if (key === 'hub')   S.contentFilter.hub = '';
+      else if (key === 'tag')   S.contentFilter.tag = '';
       else if (key === 'stage') S.contentFilter.statuses = [];
       renderCurrentView();
     });
@@ -347,6 +354,7 @@
       S.contentFilter.search = '';
       S.contentFilter.type = '';
       S.contentFilter.hub = '';
+      S.contentFilter.tag = '';
       S.contentFilter.statuses = [];
       renderCurrentView();
     });
@@ -355,32 +363,6 @@
     $(document).off('click.wcp-search-clear').on('click.wcp-search-clear', '[data-action="clear-content-search"]', function() {
       S.contentFilter.search = '';
       renderCurrentView();
-    });
-
-    // Create tag
-    $(document).off('click.wcp-create-tag').on('click.wcp-create-tag', '[data-action="create-tag"]', function() {
-      var name = prompt('Tag name:');
-      if (!name || !name.trim()) return;
-      var group = prompt('Tag group (e.g., Topic, Difficulty, Lifecycle):', 'General');
-      var colorIdx = (S.data.tags || []).length % HUB_COLORS.length;
-      var tag = { id: generateId('tag'), name: name.trim(), color: HUB_COLORS[colorIdx].color, group: (group || 'General').trim(), description: '' };
-      S.data.tags = S.data.tags || [];
-      S.data.tags.push(tag);
-      logActivity('tag_created', tag.id, tag.name, 'Tag created in ' + tag.group);
-      buildMaps(); syncToTextarea(); renderCurrentView();
-      toast('Tag created: ' + tag.name, 'success');
-    });
-
-    // Edit tag
-    $(document).off('click.wcp-edit-tag').on('click.wcp-edit-tag', '[data-action="edit-tag"]', function() {
-      var tagId = $(this).data('id');
-      var tag = S.tagMap[tagId]; if (!tag) return;
-      var newName = prompt('Tag name:', tag.name);
-      if (newName === null || !newName.trim()) return;
-      tag.name = newName.trim();
-      logActivity('tag_updated', tag.id, tag.name, 'Tag renamed');
-      buildMaps(); syncToTextarea(); renderCurrentView();
-      toast('Tag updated', 'success');
     });
 
     // Create template

@@ -45,7 +45,6 @@
   window._wcpGetAllTags = getAllTags;
   window._wcpResolveTag = resolveTag;
   window._wcpGetRecentActivity = getRecentActivity;
-  window._wcpGetImages = getImages;
 
   // Auto-status + quick-advance (used by the ▶ button in the content-detail
   // header; Part 2A imports these alongside maybeAdvanceStatus)

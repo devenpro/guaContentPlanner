@@ -30,7 +30,6 @@
         export_config: {
           cw_landing_stage: 'research',
           include_writing_instructions: true,
-          include_media_brief: true,
           include_link_map: true,
           include_schema_plan: true,
           include_research_data: 'summarized',
@@ -41,8 +40,6 @@
         }
       },
       aiPreferences: { appDefault: {}, perAction: {}, lastProvider: '', lastModel: '', defaultInstructions: '' },
-      reference_images: {},
-      image_categories: getDefaultImageCategories(),
       // Persistent snapshot of the last successful brand-data parse.
       // Lets cold loads show brand context immediately while the
       // MutationObserver waits for the real DOM to arrive. Overwritten
@@ -51,9 +48,9 @@
       lastLocation: {
         view: 'dashboard',
         selectedContentId: null, selectedHubId: null, selectedTemplateId: null,
-        selectedTagId: null, selectedImageId: null, selectedSitemapPageId: null,
+        selectedSitemapPageId: null,
         currentStep: 'info',
-        hubDetailTab: 'tree', settingsTab: 'workspace', researchTab: 'keywords',
+        settingsTab: 'workspace', researchTab: 'keywords',
         savedAt: ''
       }
     };
@@ -74,17 +71,6 @@
     return PIPELINE_STEPS.map(function(step) {
       return { id: step.key, name: step.label, required_fields: [], auto_advance: true };
     });
-  }
-
-  function getDefaultImageCategories() {
-    return [
-      { id: 'brand_style', label: 'Brand Style', icon: 'palette', color: '#2563eb' },
-      { id: 'blog_header', label: 'Blog Headers', icon: 'image', color: '#7c3aed' },
-      { id: 'social', label: 'Social Media', icon: 'share-nodes', color: '#e85d3a' },
-      { id: 'infographic', label: 'Infographics', icon: 'chart-bar', color: '#0d9488' },
-      { id: 'photography', label: 'Photography', icon: 'camera', color: '#d97706' },
-      { id: 'other', label: 'Other', icon: 'image', color: '#80868b' }
-    ];
   }
 
   function migrateData() {
@@ -157,7 +143,10 @@
       c.outline = c.outline || { sections: [], approved: false };
       c.aeo_gseo = c.aeo_gseo || { schema_types: [], qa_blocks: [], citation_score: 0, ai_overview_score: 0, eeat_status: {}, seo_score: 0, gseo_score: 0, aeo_score: 0 };
       c.internal_links = c.internal_links || [];
-      c.media_brief = c.media_brief || { image_concepts: [], style_references: [], brand_image_ids: [] };
+      // media_brief / image_concepts / style_references / brand_image_ids were
+      // part of the now-removed reference-images feature. Strip on load so the
+      // data drops out of S.data on the next syncToTextarea() save.
+      if (c.media_brief !== undefined) delete c.media_brief;
       c.export = c.export || { exported_at: '', cw_node_id: '', export_version: '', writing_instructions: '' };
       c.direction = c.direction || { headline_hints: '', structure_notes: '', writing_instructions: '', schema_direction: [], seo_notes: '' };
       // Migrate writing_instructions from export to direction if direction is empty
@@ -287,8 +276,10 @@
       var _pa = m.aiPreferences.perAction[_paKeys[_pi]];
       if (_pa && typeof _pa === 'object' && _pa.instructions == null) _pa.instructions = '';
     }
-    m.reference_images = m.reference_images || {};
-    m.image_categories = m.image_categories || getDefaultImageCategories();
+    // Reference-images feature was removed — strip persisted meta so it
+    // drops from saved JSON on the next sync.
+    if (m.reference_images !== undefined) delete m.reference_images;
+    if (m.image_categories !== undefined) delete m.image_categories;
     m.brand_cache = m.brand_cache || { identity: {}, core: null, content: null, seo: null, cachedAt: '' };
     m.lastLocation = m.lastLocation || getDefaultMeta().lastLocation;
     // Research view: collapsed from 4-mode flow to 2 tabs (keywords / competitor).

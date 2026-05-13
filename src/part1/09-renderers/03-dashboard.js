@@ -5,8 +5,6 @@
     html += '<div class="wcp-view-header"><div class="wcp-view-header-left"><h1>' + icon('chart-pie') + ' Dashboard</h1>';
     html += '<span class="wcp-view-subtitle">' + esc((S.meta.workspace || {}).name || 'Website Content Planner') + '</span></div>';
     html += '<div class="wcp-view-header-right">';
-    // Hidden until AI Audit Authority is implemented (no handler today)
-    // html += '<button class="wcp-btn-ai" data-action="ai-audit-authority">' + icon('sparkles') + ' AI Audit Authority</button>';
     html += '<button class="wcp-btn wcp-btn-primary" data-action="create-hub">' + icon('plus') + ' New Hub</button>';
     html += '</div></div>';
 
@@ -114,8 +112,6 @@
 
     var html = '<div class="wcp-dash-panel">';
     html += '<div class="wcp-dash-panel-header"><span class="wcp-dash-panel-title">' + icon('shield') + ' Optimization Readiness</span>';
-    // Hidden until AI Refresh Scores is implemented (no handler today)
-    // html += '<button class="wcp-btn-ai wcp-btn-ai-sm" data-action="ai-refresh-scores">' + icon('sparkles') + ' Refresh</button>';
     html += '</div>';
 
     var scores = [
