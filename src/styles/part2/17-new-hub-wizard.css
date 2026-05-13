@@ -49,9 +49,9 @@
 }
 
 .wcp-nhw-step-active .wcp-nhw-dot {
-  background: var(--wcp-accent, #2563eb);
+  background: var(--wcp-accent, #7c3aed);
   color: white;
-  border-color: var(--wcp-accent, #2563eb);
+  border-color: var(--wcp-accent, #7c3aed);
 }
 
 .wcp-nhw-step-done .wcp-nhw-dot {
@@ -80,7 +80,7 @@
 
 .wcp-nhw-hero-icon {
   font-size: 2rem;
-  color: var(--wcp-accent, #2563eb);
+  color: var(--wcp-accent, #7c3aed);
   margin-bottom: 6px;
 }
 
@@ -110,7 +110,7 @@
   width: 40px;
   height: 40px;
   border: 3px solid var(--wcp-gray-100);
-  border-top-color: var(--wcp-accent, #2563eb);
+  border-top-color: var(--wcp-accent, #7c3aed);
   border-radius: 50%;
   animation: wcp-nhw-spin 0.9s linear infinite;
 }
@@ -150,7 +150,7 @@
 }
 
 .wcp-nhw-confirm-card {
-  background: var(--wcp-gray-50, #fafafa);
+  background: var(--wcp-gray-50, #f8f9fa);
   border: 1px solid var(--wcp-border-light);
   border-radius: var(--wcp-radius-md);
   padding: var(--wcp-space-3);

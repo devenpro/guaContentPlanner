@@ -635,10 +635,10 @@
 .wcp-sitemap-detail-url input:focus {
   border-color: var(--wcp-primary);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
 }
 .wcp-sitemap-row.wcp-list-item-active {
-  background: var(--wcp-primary-bg, rgba(37, 99, 235, 0.08));
+  background: var(--wcp-primary-bg, rgba(26, 115, 232, 0.08));
   border-left-color: var(--wcp-primary);
 }
 .wcp-sitemap-row-title {

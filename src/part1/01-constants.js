@@ -4,22 +4,23 @@
 
   var APP_VIEWS = {
     'dashboard':  { order: 1,  label: 'Dashboard',      icon: 'chart-pie',        group: 'Overview',  description: 'Overview & metrics' },
-    'hubs':       { order: 2,  label: 'Content Hubs',   icon: 'sitemap',          group: 'Strategy',  description: 'Topical authority areas' },
-    'research':   { order: 3,  label: 'Research',       icon: 'flask',            group: 'Strategy',  description: 'Keyword & competitor research' },
+    'hubs':       { order: 2,  label: 'Content Hubs',   icon: 'sitemap',          group: 'Work',      description: 'Topical authority areas' },
+    'research':   { order: 3,  label: 'Research',       icon: 'flask',            group: 'Work',      description: 'Keyword & competitor research' },
     'content':    { order: 4,  label: 'Content',        icon: 'file-lines',       group: 'Content',   description: '3-step content pipeline' },
     'types':      { order: 5,  label: 'Content Types',  icon: 'layer-group',      group: 'Content',   description: 'Configure content types' },
     'templates':  { order: 6,  label: 'Templates',      icon: 'clipboard-list',   group: 'Content',   description: 'Content structure templates' },
     'sitemap':    { order: 7,  label: 'Sitemap',        icon: 'diagram-project',  group: 'Library',   description: 'Site pages + internal-link map' },
     'images':     { order: 8,  label: 'Images',         icon: 'images',           group: 'Library',   description: 'Brand style reference images' },
     'tags':       { order: 9,  label: 'Tags',           icon: 'tags',             group: 'Library',   description: 'Content tags & taxonomy' },
-    'activity':   { order: 10, label: 'Activity',       icon: 'clock-rotate-left',group: 'System',    description: 'Activity log' },
-    'settings':   { order: 11, label: 'Settings',       icon: 'gear',             group: 'System',    description: '7-tab configuration' }
+    'activity':   { order: 10, label: 'Activity',       icon: 'clock-rotate-left',group: 'Settings',  description: 'Activity log' },
+    'settings':   { order: 11, label: 'Settings',       icon: 'gear',             group: 'Settings',  description: '7-tab configuration' }
   };
 
   // Also allow hub-detail as a sub-view (not in nav)
   var SUB_VIEWS = { 'hub-detail': { label: 'Hub Detail', parent: 'hubs' } };
 
-  var NAV_GROUPS = ['Overview', 'Strategy', 'Content', 'Library', 'System'];
+  // Canonical sidebar group labels per docs/05-app-layout-system.md §4.3
+  var NAV_GROUPS = ['Overview', 'Work', 'Content', 'Library', 'Settings'];
 
   // Content lifecycle — 7 states spanning plan → produce → live → closed.
   // `phase` is purely for visual grouping; `branch:true` flags Rejected as an

@@ -42,7 +42,7 @@
 .wcp-mselect-trigger:focus-visible {
   outline: none;
   border-color: var(--wcp-primary);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
 }
 .wcp-mselect.wcp-mselect-disabled > .wcp-mselect-trigger {
   background: var(--wcp-gray-50);
@@ -129,8 +129,8 @@
 }
 .wcp-mselect-option:hover,
 .wcp-mselect-option.wcp-mselect-option-focus { background: var(--wcp-gray-50); }
-.wcp-mselect-option-active { background: rgba(37,99,235,0.08); color: var(--wcp-primary-dark); }
-.wcp-mselect-option-active:hover { background: rgba(37,99,235,0.12); }
+.wcp-mselect-option-active { background: rgba(26,115,232,0.08); color: var(--wcp-primary-dark); }
+.wcp-mselect-option-active:hover { background: rgba(26,115,232,0.12); }
 .wcp-mselect-option-body { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .wcp-mselect-option-label { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wcp-mselect-option-desc { font-size: 11px; color: var(--wcp-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.3; }

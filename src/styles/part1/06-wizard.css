@@ -6,7 +6,7 @@
 .wcp-wizard-step-ind { display: flex; flex-direction: column; align-items: center; gap: var(--wcp-space-1); flex-shrink: 0; cursor: pointer; position: relative; }
 .wcp-wizard-step-ind:hover .wcp-wizard-step-circle { box-shadow: var(--wcp-shadow-sm); }
 .wcp-wizard-step-circle { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--wcp-font-size-sm); font-weight: 700; border: 2.5px solid var(--wcp-border-default); background: var(--wcp-white); color: var(--wcp-text-muted); transition: all var(--wcp-transition-base); }
-.wcp-wizard-step-circle.active { border-color: var(--wcp-primary); background: var(--wcp-primary); color: var(--wcp-white); transform: scale(1.08); box-shadow: 0 0 0 4px rgba(37,99,235,0.15); }
+.wcp-wizard-step-circle.active { border-color: var(--wcp-primary); background: var(--wcp-primary); color: var(--wcp-white); transform: scale(1.08); box-shadow: 0 0 0 4px rgba(26,115,232,0.15); }
 .wcp-wizard-step-circle.done { border-color: var(--wcp-success); background: var(--wcp-success); color: var(--wcp-white); }
 .wcp-wizard-step-label { font-size: 10px; font-weight: 600; color: var(--wcp-text-muted); white-space: nowrap; text-align: center; max-width: 80px; line-height: 1.3; }
 .wcp-wizard-step-label.active { color: var(--wcp-primary); font-weight: 700; }

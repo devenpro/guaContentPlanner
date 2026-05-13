@@ -55,7 +55,7 @@ https://cdn.jsdelivr.net/gh/devenpro/guaContentPlanner@main/dist/wcp.js
 - Content type: `website_content_planner`
 - Path: `/node/*/edit`
 
-**Drupal-side prerequisites** (must be loaded globally, outside Asset Injector): jQuery, Bootstrap 5, Font Awesome Pro, and the brand/user config divs (`.llm-brand-config-data`, `.llm-config-data`).
+**Drupal-side prerequisites** (must be loaded globally, outside Asset Injector): jQuery, Bootstrap 5, Font Awesome 6 Free Solid, and the brand/user config divs (`.llm-brand-config-data`, `.llm-config-data`). FA Pro is not required — Pro icons broke in Drupal context during the freelancer LP build, so the app uses Free Solid only and aliases any Pro names through `src/part1/07-utilities/03-icons.js`.
 
 ### Pushing updates to production
 After `git push`, jsDelivr caches the `@main` URLs for up to 12 hours. To force an instant refresh, open these two URLs in a browser tab — they'll respond `{"status":"finished"}`:

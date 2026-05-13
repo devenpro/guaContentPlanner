@@ -54,13 +54,13 @@
 }
 
 .wcp-cs-row:hover {
-  border-color: var(--wcp-accent, #2563eb);
-  background: var(--wcp-gray-50, #fafafa);
+  border-color: var(--wcp-accent, #7c3aed);
+  background: var(--wcp-gray-50, #f8f9fa);
 }
 
 .wcp-cs-row-used {
   opacity: 0.72;
-  background: var(--wcp-gray-50, #fafafa);
+  background: var(--wcp-gray-50, #f8f9fa);
 }
 
 .wcp-cs-row-used:hover {

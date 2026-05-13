@@ -60,7 +60,10 @@
     var html = '<div class="wcp-sidebar' + collapsed + '" id="wcpSidebar">';
     // Brand
     html += '<div class="wcp-sidebar-brand" id="wcpSidebarBrand">';
-    html += '<div class="wcp-sidebar-brand-icon"><span>W</span></div>';
+    // Per-app brand mark, FA Free Solid (docs/05-app-layout-system.md §4).
+    // Content Planner uses fa-sitemap — it is a hub-and-cluster topical
+    // authority planner, so a sitemap glyph is the canonical mark.
+    html += '<div class="wcp-sidebar-brand-icon">' + icon('sitemap') + '</div>';
     html += '<div class="wcp-sidebar-brand-text">';
     html += '<div class="wcp-sidebar-brand-name">Content Planner</div>';
     html += '<div class="wcp-sidebar-brand-sub">' + esc(S.brand.identity.name || 'WCP') + '</div>';

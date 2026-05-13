@@ -48,7 +48,7 @@ AND path matches: /node/*/edit
 | Brand content | `.brand-content-data` div (JSON) | Brand Profile |
 | Brand SEO | `.brand-seo-data` div (JSON) | Brand Profile |
 | jQuery | Global | Drupal core |
-| Font Awesome Pro | Global | Theme or Asset Injector |
+| Font Awesome 6 Free Solid | Global | Theme or Asset Injector |
 | Bootstrap 5 | Global | Theme or Asset Injector |
 
 ## File Inventory

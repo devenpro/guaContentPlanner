@@ -239,7 +239,7 @@ The navbar is the most-shared surface and the most likely place an app wants to 
 
 ### 4.2 Sidebar blocks (top to bottom)
 
-1. **Brand block** — 30px square with the brand gradient background, the first letter of the app name in white, 800 weight. To the right: app name (700, 13px) and a sub-label (10px, muted) — usually the active brand name or workspace. Clicking the block does what makes sense for the app (typically navigates home or opens a workspace switcher).
+1. **Brand block** — 30px square with the brand gradient background, an **FA Free Solid icon chosen per app** rendered in white at ~14–15px. Each app picks the icon that best represents what it is: Content Planner uses `fa-sitemap` (a hub-and-cluster topical-authority planner *is* a sitemap), Brand Profile uses `fa-fingerprint`, Image Studio uses `fa-images`, etc. To the right: app name (700, 13px) and a sub-label (10px, muted) — usually the active brand name or workspace. Clicking the block does what makes sense for the app (typically navigates home or opens a workspace switcher).
 2. **Nav groups** — Each group has a small all-caps eyebrow label (9px, weight 700, +1.2px tracking, muted color), followed by nav items.
 3. **Nav items** — Icon (18px, Font Awesome Free Solid) + label + optional badge. Hover: `--gua-gray-50` background. Active: `--gua-primary-light` (e.g., `#e8f0fe`) background, `--gua-primary` text, weight 600. Badges: pill, count or label, secondary color; active item's badge inverts to primary background + white text.
 4. **Sidebar footer** *(optional)* — Version number, small help link, or upgrade nudge. Stays at the bottom (`flex-shrink: 0`).
