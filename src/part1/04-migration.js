@@ -10,7 +10,7 @@
       research_sessions: [],
       tags: [],
       keyword_groups: [],
-      sitemap: { pages: [], groups: [], links: [] }
+      sitemap: { pages: [], groups: [], links: [], planned: {} }
     };
   }
 
@@ -84,10 +84,16 @@
     d.tags = d.tags || [];
     d.keyword_groups = d.keyword_groups || [];
     d.content_writer_links = d.content_writer_links || [];
-    d.sitemap = d.sitemap || { pages: [], groups: [], links: [] };
-    d.sitemap.pages  = d.sitemap.pages  || [];
-    d.sitemap.groups = d.sitemap.groups || [];
-    d.sitemap.links  = d.sitemap.links  || [];
+    d.sitemap = d.sitemap || { pages: [], groups: [], links: [], planned: {} };
+    d.sitemap.pages   = d.sitemap.pages   || [];
+    d.sitemap.groups  = d.sitemap.groups  || [];
+    d.sitemap.links   = d.sitemap.links   || [];
+    // Planned sitemap = one nested tree per hub. Key = hub_id, value =
+    // { root_id, nodes: [{ id, parent_id, ... }] }. Phase 3 introduces the
+    // shape; Phase 4 builds the editor, Phase 5 adds AI planning. Live pages
+    // in d.sitemap.pages[] are unaffected — the two trees co-exist and can
+    // be diff'd later.
+    d.sitemap.planned = d.sitemap.planned || {};
 
     // Ensure each hub has all fields
     for (var hi = 0; hi < d.hubs.length; hi++) {
@@ -193,6 +199,43 @@
       sp.notes = sp.notes || '';
       sp.imported_at = sp.imported_at || new Date().toISOString();
       sp.updated_at = sp.updated_at || sp.imported_at;
+      // Hybrid hub binding (Phase 3) — every live page may have ONE primary
+      // hub for tree coloring and tag arrays for secondary cross-references.
+      // All optional; absent means "Unassigned" in the by-hub view.
+      sp.hub_id          = sp.hub_id          || '';
+      sp.cluster_id      = sp.cluster_id      || '';
+      if (!Array.isArray(sp.tag_hub_ids))     sp.tag_hub_ids     = [];
+      if (!Array.isArray(sp.tag_cluster_ids)) sp.tag_cluster_ids = [];
+    }
+
+    // Migrate planned sitemap trees — one document per hub. Each tree carries
+    // a self-contained nodes[] array (parent_id refs); root nodes have
+    // parent_id === ''. Sanitize against orphaned trees (hub deleted) by
+    // dropping planned[hubId] when the hub no longer exists.
+    var planned = d.sitemap.planned;
+    for (var phid in planned) {
+      var tree = planned[phid];
+      if (!tree || typeof tree !== 'object') { delete planned[phid]; continue; }
+      tree.nodes = Array.isArray(tree.nodes) ? tree.nodes : [];
+      tree.root_id = tree.root_id || '';
+      for (var pni = 0; pni < tree.nodes.length; pni++) {
+        var pn = tree.nodes[pni];
+        pn.id              = pn.id || generateId('pln');
+        pn.parent_id       = pn.parent_id || '';
+        pn.label           = pn.label || '';
+        pn.slug            = pn.slug || '';
+        pn.description     = pn.description || '';
+        pn.priority        = (pn.priority === 1 || pn.priority === 2 || pn.priority === 3) ? pn.priority : null;
+        pn.intent          = pn.intent || '';                // informational / commercial / etc.
+        pn.content_type_id = pn.content_type_id || '';
+        pn.content_id      = pn.content_id || '';            // optional link to planner content
+        pn.cluster_id      = pn.cluster_id || '';            // optional secondary cluster tag
+        pn.status          = pn.status || 'planned';         // 'planned' | 'proposed' (AI) | 'promoted' (linked to live page)
+        pn.live_page_id    = pn.live_page_id || '';          // set when promoted to a live sitemap page
+        pn.ai_meta         = pn.ai_meta || null;             // {rationale, generated_at, ...}
+        pn.created         = pn.created || new Date().toISOString();
+        pn.updated         = pn.updated || pn.created;
+      }
     }
 
     // Migrate sitemap links — only committed states persist
