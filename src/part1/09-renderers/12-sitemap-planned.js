@@ -58,10 +58,15 @@
     html += ' <span class="wcp-text-muted">(' + nodes.length + ')</span></span>';
     html += '<button class="wcp-btn wcp-btn-primary wcp-btn-sm" data-action="planned-add-root" data-hub="' + esc(hub.id) + '">' + icon('plus') + ' Root node</button>';
     html += '</div>';
-    // Reserved row for Phase-5 AI actions (Plan Sitemap / Expand branch).
-    // Hidden today but the slot keeps the visual rhythm consistent so the
-    // toolbar height doesn't shift when the AI buttons appear.
-    html += '<div class="wcp-planned-ai-row wcp-text-xs wcp-text-muted">' + icon('sparkles') + ' AI sitemap planning lands in the next phase.</div>';
+    // AI planning row — proposes a full subtree for empty trees, or top-ups
+    // for trees that already have content. Per-node "Expand branch" lives on
+    // the row kebab + the detail pane.
+    html += '<div class="wcp-planned-ai-row">';
+    html += '<button class="wcp-btn-ai wcp-btn-sm" data-action="ai-plan-sitemap" data-hub="' + esc(hub.id) + '" title="AI proposes a complete 2-3 level sitemap subtree for this hub">';
+    html += icon('sparkles') + ' ' + (nodes.length ? 'Plan more' : 'Plan sitemap');
+    html += '</button>';
+    html += (window._wcpAiSel ? window._wcpAiSel('ai-plan-sitemap') : '');
+    html += '</div>';
     html += '</div>';
 
     html += '<div class="wcp-list-pane-items wcp-planned-tree" id="wcpPlannedTree" data-hub="' + esc(hub.id) + '">';
@@ -181,12 +186,27 @@
       html += '</div>';
     }
 
-    // Header: label + status + delete
+    // Header: label + status + actions (AI expand, promote, delete)
     html += '<div class="wcp-sitemap-detail-header">';
     html += '<div class="wcp-sitemap-detail-title-row">';
     html += '<input type="text" class="wcp-input wcp-sitemap-title-input" data-action="planned-save" data-node-id="' + esc(node.id) + '" data-field="label" value="' + esc(node.label || '') + '" placeholder="Node label…">';
     html += '<span class="wcp-badge wcp-planned-status-badge wcp-planned-status-' + (node.status || 'planned') + '">' + esc(node.status || 'planned') + '</span>';
     html += '<button class="wcp-btn-icon wcp-btn-delete-sm" data-action="planned-delete" data-node-id="' + esc(node.id) + '" title="Delete node (and its children)">' + icon('trash') + '</button>';
+    html += '</div>';
+
+    // Action row — AI Expand + Promote to live. Promote is suppressed when
+    // the node is already promoted (status='promoted').
+    html += '<div class="wcp-planned-node-actions">';
+    html += '<button class="wcp-btn-ai wcp-btn-sm" data-action="ai-expand-sitemap-branch" data-node-id="' + esc(node.id) + '" title="AI proposes 4-8 child pages under this node">';
+    html += icon('sparkles') + ' Expand branch</button>';
+    html += (window._wcpAiSel ? window._wcpAiSel('ai-expand-sitemap-branch') : '');
+    if (node.status !== 'promoted') {
+      html += '<button class="wcp-btn wcp-btn-sm" data-action="planned-promote" data-node-id="' + esc(node.id) + '" title="Create a live sitemap page from this planned node">';
+      html += icon('arrow-up-right-from-square') + ' Promote to live</button>';
+    } else if (node.live_page_id && S.sitemapPageMap[node.live_page_id]) {
+      html += '<button class="wcp-btn wcp-btn-sm wcp-btn-ghost" data-action="planned-open-live" data-page-id="' + esc(node.live_page_id) + '" title="Switch to live mode and select the promoted page">';
+      html += icon('arrow-up-right-from-square') + ' Open live page</button>';
+    }
     html += '</div>';
     // Slug + URL preview
     html += '<div class="wcp-sitemap-detail-url">';

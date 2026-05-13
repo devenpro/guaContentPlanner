@@ -6,6 +6,8 @@
       'ai-suggest-type', 'ai-fill-brief',
       // Hub & global actions (5)
       'ai-suggest-hubs', 'ai-enrich-cluster', 'ai-suggest-tags', 'ai-build-template', 'ai-plan-calendar',
+      // Sitemap planning (Phase 5)
+      'ai-plan-sitemap', 'ai-expand-sitemap-branch',
       // Research runners (3)
       'research_keywords', 'research_gaps', 'research_competitor'
     ];

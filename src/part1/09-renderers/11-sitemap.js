@@ -140,13 +140,23 @@
     // current sitemap state (no-title pages → Fetch titles; has pages → AI suggest priorities)
     var untitled = 0;
     for (var ui = 0; ui < allPages.length; ui++) { if (!allPages[ui].title && allPages[ui].status !== 'removed') untitled++; }
-    if (untitled > 0 || allPages.length > 0) {
+    // Show the Diff button only when at least one hub has a planned tree
+    // (otherwise there's nothing to diff against).
+    var anyPlanned = false;
+    var plannedAll = (sm.planned || {});
+    for (var phid in plannedAll) {
+      if (plannedAll[phid] && plannedAll[phid].nodes && plannedAll[phid].nodes.length) { anyPlanned = true; break; }
+    }
+    if (untitled > 0 || allPages.length > 0 || anyPlanned) {
       html += '<div class="wcp-sitemap-ai-row">';
       if (untitled > 0) {
         html += '<button class="wcp-btn wcp-btn-sm wcp-btn-ghost" data-action="sitemap-fetch-titles" title="Try to fetch <title> from each URL that has no title. Many public sites will be blocked by CORS.">' + icon('download') + ' Fetch titles <span class="wcp-text-muted">(' + untitled + ')</span></button>';
       }
       if (allPages.length > 0) {
         html += '<button class="wcp-btn wcp-btn-ai wcp-btn-sm" data-action="sitemap-suggest-priorities" title="Let AI propose P1/P2/P3 for each page based on traffic/revenue signal">' + icon('sparkles') + ' Suggest priorities</button>';
+      }
+      if (anyPlanned) {
+        html += '<button class="wcp-btn wcp-btn-sm wcp-btn-ghost" data-action="sitemap-show-diff" title="Compare planned vs live pages per hub">' + icon('arrows-left-right') + ' Diff vs planned</button>';
       }
       html += '</div>';
     }
@@ -325,9 +335,14 @@
     }
     html += '</div>';
 
-    // TITLE
+    // TITLE — adds a primary-hub dot (Phase 4 hybrid binding) and a
+    // "from plan" badge when the page was promoted from a planned node
+    // (Phase 5). Both are subtle visual cues, not interactive.
     html += '<div class="wcp-sitemap-row-title">';
+    var primaryHub = page.hub_id ? S.hubMap[page.hub_id] : null;
+    if (primaryHub) html += '<span class="wcp-sitemap-row-hubdot" style="background:' + (primaryHub.color || '#6b7280') + '" title="Hub: ' + esc(primaryHub.name) + '"></span>';
     html += '<span class="wcp-sitemap-row-title-text">' + esc(titleText) + '</span>';
+    if (page.source === 'planned') html += '<span class="wcp-badge wcp-badge-plan" title="Promoted from planned tree">' + icon('sparkles') + ' planned</span>';
     html += '</div>';
 
     // GROUP chip — click opens the inline group picker on that row

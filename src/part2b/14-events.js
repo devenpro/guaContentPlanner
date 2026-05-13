@@ -95,6 +95,61 @@
     $(document).off('click' + ns + '-aiga').on('click' + ns + '-aiga', '[data-action="ai-gap-analysis"]', function() { var hid = $(this).data('hub') || S.selectedHubId; if (hid) aiGapAnalysisForHub(hid); });
     $(document).off('click' + ns + '-aisc').on('click' + ns + '-aisc', '[data-action="ai-suggest-content"]', function() { var id = $(this).data('id'); if (id) aiSuggestContent(id); });
 
+    // ── Sitemap planning AI (Phase 5) ──
+    $(document).off('click' + ns + '-aips').on('click' + ns + '-aips', '[data-action="ai-plan-sitemap"]', function() {
+      var hid = $(this).data('hub') || S.sitemapPlanHubId;
+      if (hid) aiPlanSitemap(hid);
+    });
+    $(document).off('click' + ns + '-aiesb').on('click' + ns + '-aiesb', '[data-action="ai-expand-sitemap-branch"]', function() {
+      var nid = $(this).data('node-id') || S.selectedPlannedNodeId;
+      if (nid) aiExpandSitemapBranch(nid);
+    });
+    $(document).off('click' + ns + '-pp').on('click' + ns + '-pp', '[data-action="planned-promote"]', function(e) {
+      e.stopPropagation();
+      var nid = $(this).data('node-id'); if (!nid) return;
+      var live = promotePlannedNodeToLive(nid);
+      if (live) {
+        toast('Promoted to live page', 'success');
+        render();
+      }
+    });
+    $(document).off('click' + ns + '-pol').on('click' + ns + '-pol', '[data-action="planned-open-live"]', function(e) {
+      e.stopPropagation();
+      var pid = $(this).data('page-id'); if (!pid) return;
+      S.sitemapMode = 'live';
+      S.selectedSitemapPageId = pid;
+      render();
+    });
+
+    // ── Sitemap diff modal (Phase 5.3) ──
+    $(document).off('click' + ns + '-smdiff').on('click' + ns + '-smdiff', '[data-action="sitemap-show-diff"]', function() {
+      _openSitemapDiffModal();
+    });
+    // Per-row "Add to plan" inside the diff modal — creates a planned node
+    // from a live page that wasn't represented in the planned tree.
+    $(document).off('click' + ns + '-smdadd').on('click' + ns + '-smdadd', '[data-action="diff-add-to-plan"]', function() {
+      var pid = $(this).data('page-id');
+      var hid = $(this).data('hub');
+      if (!pid || !hid) return;
+      var p = S.sitemapPageMap[pid]; if (!p) return;
+      if (!window._wcpCreatePlannedNode) return;
+      var slug = (p.url || '').replace(/^https?:\/\/[^\/]+/i, '').replace(/^\/+|\/+$/g, '');
+      var node = window._wcpCreatePlannedNode(hid, '', {
+        label: p.title || slug || 'Live page',
+        slug:  slug,
+        description: p.meta_description || '',
+        priority: p.priority || null,
+        status: 'planned',
+        live_page_id: p.id
+      });
+      if (!node) return;
+      // Mark the new node promoted (it's already live).
+      node.status = 'promoted';
+      buildMaps(); syncToTextarea();
+      toast('Added "' + (p.title || slug) + '" to the plan', 'success');
+      _openSitemapDiffModal(); // refresh
+    });
+
     // ── Adopt hub from suggestion modal ──
     // Legacy bare "adopt-hub" button — still works if anything else in the
     // app emits it. Current AI-suggest-hubs modal uses the richer
@@ -331,6 +386,53 @@
     });
 
     console.log('[WCP] Part 2B events initialized');
+  }
+
+  // Sitemap diff modal (Phase 5.3) — shows planned-only vs live-only pages
+  // per hub. "Add to plan" buttons turn a live-only page into a planned
+  // node so the user can fold it into the strategy.
+  function _openSitemapDiffModal() {
+    var hubs = (S.data.hubs || []).slice().sort(function(a, b) { return (a.name || '').localeCompare(b.name || ''); });
+    if (!hubs.length) { toast('No hubs yet', 'info'); return; }
+    var html = '<div class="wcp-sm-diff">';
+    var nothing = true;
+    for (var hi = 0; hi < hubs.length; hi++) {
+      var h = hubs[hi];
+      var diff = (typeof buildSitemapDiff === 'function') ? buildSitemapDiff(h.id) : { plannedOnly: [], liveOnly: [], matched: [] };
+      if (!diff.plannedOnly.length && !diff.liveOnly.length && !diff.matched.length) continue;
+      nothing = false;
+      html += '<details class="wcp-sm-diff-hub" open>';
+      html += '<summary><span class="wcp-sm-diff-dot" style="background:' + (h.color || '#6b7280') + '"></span>' + esc(h.name);
+      html += ' <span class="wcp-text-xs wcp-text-muted">' + diff.matched.length + ' matched · ' + diff.plannedOnly.length + ' planned-only · ' + diff.liveOnly.length + ' live-only</span></summary>';
+      // Planned-only: tells the user what to build / publish next.
+      if (diff.plannedOnly.length) {
+        html += '<div class="wcp-sm-diff-section"><div class="wcp-section-label">' + icon('diagram-project') + ' Planned but not live (' + diff.plannedOnly.length + ')</div>';
+        for (var pi = 0; pi < diff.plannedOnly.length; pi++) {
+          var pn = diff.plannedOnly[pi];
+          html += '<div class="wcp-sm-diff-row"><span class="wcp-sm-diff-label">' + esc(pn.label || '(untitled)') + '</span>';
+          if (pn.slug) html += '<span class="wcp-text-xs wcp-text-muted">/' + esc(pn.slug) + '</span>';
+          html += '</div>';
+        }
+        html += '</div>';
+      }
+      // Live-only: pages that exist but aren't represented in the plan. Each
+      // gets an "Add to plan" button.
+      if (diff.liveOnly.length) {
+        html += '<div class="wcp-sm-diff-section"><div class="wcp-section-label">' + icon('globe') + ' Live but unplanned (' + diff.liveOnly.length + ')</div>';
+        for (var li = 0; li < diff.liveOnly.length; li++) {
+          var lp = diff.liveOnly[li];
+          html += '<div class="wcp-sm-diff-row"><span class="wcp-sm-diff-label">' + esc(lp.title || lp.url) + '</span>';
+          html += '<span class="wcp-text-xs wcp-text-muted">' + esc(lp.url || '') + '</span>';
+          html += '<button class="wcp-btn wcp-btn-sm" data-action="diff-add-to-plan" data-page-id="' + esc(lp.id) + '" data-hub="' + esc(h.id) + '">' + icon('plus') + ' Add to plan</button>';
+          html += '</div>';
+        }
+        html += '</div>';
+      }
+      html += '</details>';
+    }
+    if (nothing) html += '<div class="wcp-text-sm wcp-text-muted" style="padding:var(--wcp-space-4);text-align:center">No planned trees or hub-tagged live pages yet. Plan a sitemap in <strong>Planned</strong> mode to populate this view.</div>';
+    html += '</div>';
+    openModal('Sitemap diff', html, { size: 'lg', footer: false });
   }
 
   function setupKeyboardShortcuts() {
