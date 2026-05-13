@@ -23,6 +23,13 @@
     html += renderDashNotifications();
     html += '</div>';
 
+    // Sitemap coverage panel (Phase 6) — appears only when at least one hub
+    // has a planned tree or live pages, to avoid noise on fresh workspaces.
+    var smPanel = renderDashSitemapCoverage();
+    if (smPanel) {
+      html += '<div class="wcp-dash-grid" style="grid-template-columns:1fr">' + smPanel + '</div>';
+    }
+
     // Brand status
     if (!S.brand || !S.brand.configured) {
       html += '<div style="padding:var(--wcp-space-3) var(--wcp-space-4);background:var(--wcp-warning-light);border-radius:var(--wcp-radius-md);color:var(--wcp-warning);font-size:var(--wcp-font-size-sm);margin-top:var(--wcp-space-4)">';
@@ -261,6 +268,51 @@
     html += '</span>';
     html += '<span style="color:var(--wcp-text-muted);flex-shrink:0">' + formatRelativeTime(act.timestamp) + '</span>';
     html += '</div>';
+    return html;
+  }
+
+  // Sitemap coverage panel (Phase 6) — per-hub bars showing planned vs live
+  // page counts. Helps the user spot hubs where the plan and the live site
+  // have drifted apart. Returns '' when nothing has been planned yet so the
+  // dashboard doesn't grow an empty box on fresh workspaces.
+  function renderDashSitemapCoverage() {
+    var hubs = S.data.hubs || [];
+    if (!hubs.length) return '';
+    var rows = [];
+    var maxAny = 0;
+    for (var hi = 0; hi < hubs.length; hi++) {
+      var h = hubs[hi];
+      var planned = (S.plannedNodeCountByHub && S.plannedNodeCountByHub[h.id]) || 0;
+      var live = ((S.sitemapPagesByHub && S.sitemapPagesByHub[h.id]) || []).length;
+      if (planned === 0 && live === 0) continue;
+      rows.push({ hub: h, planned: planned, live: live });
+      if (planned > maxAny) maxAny = planned;
+      if (live > maxAny) maxAny = live;
+    }
+    if (!rows.length) return '';
+
+    var html = '<div class="wcp-dash-panel">';
+    html += '<div class="wcp-dash-panel-header">';
+    html += '<span class="wcp-dash-panel-title">' + icon('diagram-project') + ' Sitemap coverage</span>';
+    html += '<button class="wcp-btn-link" data-action="go-view" data-view="sitemap">Open sitemap ' + icon('arrow-right') + '</button>';
+    html += '</div>';
+    html += '<div class="wcp-dash-sm-coverage">';
+    for (var ri = 0; ri < rows.length; ri++) {
+      var r = rows[ri];
+      var plannedPct = maxAny > 0 ? Math.round((r.planned / maxAny) * 100) : 0;
+      var livePct    = maxAny > 0 ? Math.round((r.live    / maxAny) * 100) : 0;
+      html += '<div class="wcp-dash-sm-row" data-action="hub-open-sitemap-planned" data-hub="' + esc(r.hub.id) + '">';
+      html += '<div class="wcp-dash-sm-hub">';
+      html += '<span class="wcp-dash-sm-hub-dot" style="background:' + (r.hub.color || '#6b7280') + '"></span>';
+      html += '<span class="wcp-dash-sm-hub-name">' + esc(r.hub.name) + '</span>';
+      html += '</div>';
+      html += '<div class="wcp-dash-sm-bars">';
+      html += '<div class="wcp-dash-sm-bar"><div class="wcp-dash-sm-bar-fill wcp-dash-sm-bar-planned" style="width:' + plannedPct + '%"></div><span class="wcp-dash-sm-bar-num">' + r.planned + ' planned</span></div>';
+      html += '<div class="wcp-dash-sm-bar"><div class="wcp-dash-sm-bar-fill wcp-dash-sm-bar-live" style="width:' + livePct + '%"></div><span class="wcp-dash-sm-bar-num">' + r.live + ' live</span></div>';
+      html += '</div>';
+      html += '</div>';
+    }
+    html += '</div></div>';
     return html;
   }
 

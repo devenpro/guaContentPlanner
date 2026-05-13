@@ -708,6 +708,30 @@
       renderCurrentView();
     });
 
+    // ── Hub → Sitemap deep-link (Phase 6) ─────────────────────────────
+    $(document).off('click.wcp-hub-sm-pln').on('click.wcp-hub-sm-pln', '[data-action="hub-open-sitemap-planned"]', function(e) {
+      e.stopPropagation();
+      var hid = $(this).data('hub') || S.selectedHubId;
+      var nid = $(this).data('node-id') || '';
+      if (!hid) return;
+      S.sitemapMode = 'planned';
+      S.sitemapPlanHubId = hid;
+      if (nid) S.selectedPlannedNodeId = nid;
+      if (window._wcpNavigate) window._wcpNavigate('sitemap'); else renderCurrentView();
+    });
+    $(document).off('click.wcp-hub-sm-live').on('click.wcp-hub-sm-live', '[data-action="hub-open-sitemap-live"]', function(e) {
+      e.stopPropagation();
+      S.sitemapMode = 'live';
+      var hid = $(this).data('hub');
+      if (hid) {
+        // Land on the first live page tagged to this hub so the user sees
+        // immediate context rather than the previously-selected page.
+        var pages = (S.sitemapPagesByHub && S.sitemapPagesByHub[hid]) || [];
+        if (pages.length) S.selectedSitemapPageId = pages[0].id;
+      }
+      if (window._wcpNavigate) window._wcpNavigate('sitemap'); else renderCurrentView();
+    });
+
     // ── Sitemap mode bar (Phase 4) ────────────────────────────────────
     $(document).off('click.wcp-sm-mode').on('click.wcp-sm-mode', '[data-action="sitemap-set-mode"]', function() {
       var mode = $(this).data('mode');

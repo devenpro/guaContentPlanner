@@ -140,8 +140,20 @@
     html += renderHubClusters(hub, clusters);
     html += '</div>';
 
-    // Gaps (collapsible)
+    // Sitemap (collapsible) — quick view of this hub's planned tree + live
+    // pages, with a CTA to open the Sitemap planned-mode editor. Counts only;
+    // full editor lives in Sitemap → Planned.
     html += '<div class="wcp-collapsible-section" style="margin-top:var(--wcp-space-4)">';
+    html += '<div class="wcp-collapsible-toggle" data-action="toggle-collapsible">';
+    html += '<h3 style="font-size:var(--wcp-font-size-base)">' + icon('diagram-project') + ' Sitemap</h3>';
+    html += '<span class="wcp-collapsible-chevron">' + icon('chevron-down') + '</span>';
+    html += '</div>';
+    html += '<div class="wcp-collapsible-body" style="display:none">';
+    html += renderHubSitemap(hub);
+    html += '</div></div>';
+
+    // Gaps (collapsible)
+    html += '<div class="wcp-collapsible-section" style="margin-top:var(--wcp-space-3)">';
     html += '<div class="wcp-collapsible-toggle" data-action="toggle-collapsible">';
     html += '<h3 style="font-size:var(--wcp-font-size-base)">' + icon('circle-exclamation') + ' Gaps</h3>';
     html += '<span class="wcp-collapsible-chevron">' + icon('chevron-down') + '</span>';
@@ -247,11 +259,20 @@
       var stCfg = CLUSTER_STATUSES[cl.status] || { label: cl.status, color: '#80868b' };
       var doneCount = clContent.filter(function(c) { return c.status === 'export_ready' || c.status === 'exported'; }).length;
 
+      // Planned-tree pages tagged to this cluster (Phase 6 sitemap interlink).
+      // Counted from S.plannedNodeMap which holds nodes from every hub's tree.
+      var clPlannedCount = 0;
+      var pnMap = S.plannedNodeMap || {};
+      for (var pnk in pnMap) { if (pnMap[pnk] && pnMap[pnk].cluster_id === cl.id) clPlannedCount++; }
+
       html += '<div class="wcp-cluster-card">';
       html += '<div style="flex:1;min-width:0">';
       html += '<div style="display:flex;align-items:center;gap:var(--wcp-space-2);margin-bottom:var(--wcp-space-1)">';
       html += '<span style="font-size:var(--wcp-font-size-base);font-weight:700;color:var(--wcp-text-primary)">' + esc(cl.name) + '</span>';
       html += badge(stCfg.label, stCfg.color);
+      if (clPlannedCount > 0) {
+        html += '<span class="wcp-badge wcp-cluster-sitemap-badge" data-action="hub-open-sitemap-planned" data-hub="' + esc(hub.id) + '" title="' + clPlannedCount + ' planned sitemap node' + (clPlannedCount !== 1 ? 's' : '') + ' tagged to this cluster">' + icon('diagram-project') + ' ' + clPlannedCount + '</span>';
+      }
       html += '</div>';
       // Keywords preview
       var kwPreview = (cl.keywords || []).slice(0, 5).map(function(k) { return typeof k === 'string' ? k : (k.keyword || ''); }).filter(Boolean).join(', ');
@@ -368,6 +389,58 @@
         if (lr.anchor) html += '<span class="wcp-link-anchor">"' + esc(truncate(lr.anchor, 30)) + '"</span>';
         html += '</div>';
       }
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  // Compact sitemap panel on hub detail — counts + a small preview of the
+  // top-level planned nodes. Drives the user into the full Sitemap view for
+  // editing rather than duplicating the tree editor here.
+  function renderHubSitemap(hub) {
+    var plannedCount = (S.plannedNodeCountByHub && S.plannedNodeCountByHub[hub.id]) || 0;
+    var livePages = (S.sitemapPagesByHub && S.sitemapPagesByHub[hub.id]) || [];
+    var tree = (S.data.sitemap && S.data.sitemap.planned && S.data.sitemap.planned[hub.id]) || null;
+    var roots = [];
+    if (tree && Array.isArray(tree.nodes)) {
+      for (var i = 0; i < tree.nodes.length; i++) {
+        if (!(tree.nodes[i].parent_id || '')) roots.push(tree.nodes[i]);
+      }
+    }
+
+    var html = '<div class="wcp-card"><div class="wcp-card-body">';
+    // Summary strip
+    html += '<div class="wcp-hub-sitemap-summary">';
+    html += '<div class="wcp-hub-sitemap-stat"><span class="wcp-hub-sitemap-num">' + plannedCount + '</span><span class="wcp-hub-sitemap-lbl">Planned nodes</span></div>';
+    html += '<div class="wcp-hub-sitemap-stat"><span class="wcp-hub-sitemap-num">' + livePages.length + '</span><span class="wcp-hub-sitemap-lbl">Live pages</span></div>';
+    html += '<div class="wcp-hub-sitemap-actions">';
+    html += '<button class="wcp-btn wcp-btn-primary wcp-btn-sm" data-action="hub-open-sitemap-planned" data-hub="' + esc(hub.id) + '">' + icon('diagram-project') + ' Open planned tree</button>';
+    if (livePages.length) {
+      html += '<button class="wcp-btn wcp-btn-sm wcp-btn-ghost" data-action="hub-open-sitemap-live" data-hub="' + esc(hub.id) + '">' + icon('list') + ' View live pages</button>';
+    }
+    html += '</div>';
+    html += '</div>';
+
+    // Top-level planned preview (max 6)
+    if (roots.length) {
+      html += '<div class="wcp-hub-sitemap-preview">';
+      html += '<div class="wcp-section-label" style="margin-top:var(--wcp-space-3)">' + icon('diagram-project') + ' Top-level pages</div>';
+      var cap = Math.min(roots.length, 6);
+      for (var ri = 0; ri < cap; ri++) {
+        var rn = roots[ri];
+        html += '<div class="wcp-hub-sitemap-row" data-action="hub-open-sitemap-planned" data-hub="' + esc(hub.id) + '" data-node-id="' + esc(rn.id) + '">';
+        html += '<span class="wcp-planned-pip wcp-planned-status-' + (rn.status || 'planned') + '"></span>';
+        html += '<span class="wcp-hub-sitemap-row-label">' + esc(rn.label || '(untitled)') + '</span>';
+        if (rn.status) html += '<span class="wcp-badge wcp-planned-status-badge wcp-planned-status-' + esc(rn.status) + '">' + esc(rn.status) + '</span>';
+        html += '</div>';
+      }
+      if (roots.length > cap) html += '<div class="wcp-text-xs wcp-text-muted" style="padding-top:6px">+ ' + (roots.length - cap) + ' more — open the planned tree to see all.</div>';
+      html += '</div>';
+    } else {
+      html += '<div class="wcp-text-sm wcp-text-muted" style="margin-top:var(--wcp-space-3)">';
+      html += 'No planned sitemap yet. Click <strong>Open planned tree</strong> to start, or let AI plan one for you.';
+      html += '</div>';
     }
 
     html += '</div></div>';

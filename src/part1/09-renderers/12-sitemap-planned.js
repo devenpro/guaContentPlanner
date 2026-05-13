@@ -267,18 +267,32 @@
     }
     html += '</select></div>';
 
-    // Linked content + live page (read-only; phase 5/6 will add promote/unlink)
-    if (linkedContent || livePage) {
+    // Linked content piece — pickable. Phase 6 interlink: a planned node
+    // can claim an existing content piece so opening either side jumps
+    // straight to the other. The content list is scoped to this hub for
+    // signal-to-noise (most users won't want cross-hub links here).
+    html += '<div class="wcp-sitemap-detail-block">';
+    html += '<div class="wcp-section-label">' + icon('file-lines') + ' Linked content</div>';
+    var hubContentList = (typeof getHubContent === 'function') ? getHubContent(hub.id) : [];
+    hubContentList = hubContentList.slice().sort(function(a, b) { return (a.title || '').localeCompare(b.title || ''); });
+    html += '<select class="wcp-select wcp-select-sm" data-action="planned-save" data-node-id="' + esc(node.id) + '" data-field="content_id">';
+    html += '<option value=""' + (!node.content_id ? ' selected' : '') + '>— None —</option>';
+    for (var hcli = 0; hcli < hubContentList.length; hcli++) {
+      var hc = hubContentList[hcli];
+      html += '<option value="' + esc(hc.id) + '"' + (node.content_id === hc.id ? ' selected' : '') + '>' + esc(hc.title || '(untitled)') + '</option>';
+    }
+    html += '</select>';
+    if (linkedContent) {
+      html += '<button class="wcp-btn wcp-btn-sm" style="margin-top:var(--wcp-space-2)" data-action="select-content" data-id="' + esc(linkedContent.id) + '">' + icon('arrow-right') + ' Open content</button>';
+    }
+    html += '</div>';
+
+    if (livePage) {
       html += '<div class="wcp-sitemap-detail-block">';
-      html += '<div class="wcp-section-label">' + icon('link') + ' Links</div>';
-      if (linkedContent) {
-        html += '<div class="wcp-sitemap-linked-content"><div class="wcp-sitemap-linked-title">' + icon('file-lines') + ' ' + esc(linkedContent.title || '(untitled)') + '</div>';
-        html += '<button class="wcp-btn wcp-btn-sm" data-action="select-content" data-id="' + esc(linkedContent.id) + '">Open content</button></div>';
-      }
-      if (livePage) {
-        html += '<div class="wcp-sitemap-linked-content" style="margin-top:var(--wcp-space-2)"><div class="wcp-sitemap-linked-title">' + icon('globe') + ' Live: ' + esc(livePage.url || '') + '</div></div>';
-      }
-      html += '</div>';
+      html += '<div class="wcp-section-label">' + icon('globe') + ' Live page</div>';
+      html += '<div class="wcp-sitemap-linked-content"><div class="wcp-sitemap-linked-title">' + esc(livePage.url || '') + '</div>';
+      html += '<button class="wcp-btn wcp-btn-sm" data-action="planned-open-live" data-page-id="' + esc(livePage.id) + '">' + icon('arrow-right') + ' Open in live mode</button>';
+      html += '</div></div>';
     }
 
     // AI rationale — only present on proposed nodes from Phase 5.
