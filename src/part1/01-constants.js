@@ -2,25 +2,27 @@
   // SECTION 1: CONSTANTS
   // ============================================================
 
+  // Sidebar layout (May 2026): Dashboard up top, Strategy (planning), Work
+  // (producing), Settings (admin). Library group was dropped when Images and
+  // the standalone Tags page were removed. Sitemap moved from Library to
+  // Strategy because it's a planning artifact, not a reference library.
   var APP_VIEWS = {
-    'dashboard':  { order: 1,  label: 'Dashboard',      icon: 'chart-pie',        group: 'Overview',  description: 'Overview & metrics' },
-    'hubs':       { order: 2,  label: 'Content Hubs',   icon: 'sitemap',          group: 'Work',      description: 'Topical authority areas' },
-    'research':   { order: 3,  label: 'Research',       icon: 'flask',            group: 'Work',      description: 'Keyword & competitor research' },
-    'content':    { order: 4,  label: 'Content',        icon: 'file-lines',       group: 'Content',   description: '3-step content pipeline' },
-    'types':      { order: 5,  label: 'Content Types',  icon: 'layer-group',      group: 'Content',   description: 'Configure content types' },
-    'templates':  { order: 6,  label: 'Templates',      icon: 'clipboard-list',   group: 'Content',   description: 'Content structure templates' },
-    'sitemap':    { order: 7,  label: 'Sitemap',        icon: 'diagram-project',  group: 'Library',   description: 'Site pages + internal-link map' },
-    'images':     { order: 8,  label: 'Images',         icon: 'images',           group: 'Library',   description: 'Brand style reference images' },
-    'tags':       { order: 9,  label: 'Tags',           icon: 'tags',             group: 'Library',   description: 'Content tags & taxonomy' },
-    'activity':   { order: 10, label: 'Activity',       icon: 'clock-rotate-left',group: 'Settings',  description: 'Activity log' },
-    'settings':   { order: 11, label: 'Settings',       icon: 'gear',             group: 'Settings',  description: '7-tab configuration' }
+    'dashboard':  { order: 1, label: 'Dashboard',     icon: 'chart-pie',         group: 'Overview', description: 'Overview & metrics' },
+    'hubs':       { order: 2, label: 'Content Hubs',  icon: 'sitemap',           group: 'Strategy', description: 'Topical authority areas' },
+    'research':   { order: 3, label: 'Research',      icon: 'flask',             group: 'Strategy', description: 'Keyword & competitor research' },
+    'sitemap':    { order: 4, label: 'Sitemap',       icon: 'diagram-project',   group: 'Strategy', description: 'Site pages + internal-link map' },
+    'content':    { order: 5, label: 'Content',       icon: 'file-lines',        group: 'Work',     description: 'Content pipeline' },
+    'types':      { order: 6, label: 'Content Types', icon: 'layer-group',       group: 'Work',     description: 'Configure content types' },
+    'templates':  { order: 7, label: 'Templates',     icon: 'clipboard-list',    group: 'Work',     description: 'Content structure templates' },
+    'activity':   { order: 8, label: 'Activity',      icon: 'clock-rotate-left', group: 'Settings', description: 'Activity log' },
+    'settings':   { order: 9, label: 'Settings',      icon: 'gear',              group: 'Settings', description: 'Configuration' }
   };
 
-  // Also allow hub-detail as a sub-view (not in nav)
-  var SUB_VIEWS = { 'hub-detail': { label: 'Hub Detail', parent: 'hubs' } };
+  // No sub-views currently — kept as an extension point for future
+  // contextual deep-links (e.g. /sitemap/<hub>/planned).
+  var SUB_VIEWS = {};
 
-  // Canonical sidebar group labels per docs/05-app-layout-system.md §4.3
-  var NAV_GROUPS = ['Overview', 'Work', 'Content', 'Library', 'Settings'];
+  var NAV_GROUPS = ['Overview', 'Strategy', 'Work', 'Settings'];
 
   // Content lifecycle — 7 states spanning plan → produce → live → closed.
   // `phase` is purely for visual grouping; `branch:true` flags Rejected as an
@@ -139,7 +141,11 @@
     'sitemap_link_selected':  { icon: 'link',              color: '#7c3aed' },
     'sitemap_link_exported':  { icon: 'paper-plane',       color: '#0891b2' },
     'sitemap_link_published': { icon: 'link-simple',       color: '#059669' },
-    'sitemap_link_rejected':  { icon: 'link-slash',        color: '#6b7280' }
+    'sitemap_link_rejected':  { icon: 'link-slash',        color: '#6b7280' },
+    'sitemap_planned_node_added':    { icon: 'diagram-project', color: '#059669' },
+    'sitemap_planned_node_updated':  { icon: 'diagram-project', color: '#2563eb' },
+    'sitemap_planned_node_moved':    { icon: 'arrows-up-down-left-right', color: '#7c3aed' },
+    'sitemap_planned_node_removed':  { icon: 'trash',             color: '#dc2626' }
   };
 
   // Sitemap page priority — a MANUAL traffic/revenue/link-building judgement.

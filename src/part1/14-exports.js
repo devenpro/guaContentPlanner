@@ -45,7 +45,20 @@
   window._wcpGetAllTags = getAllTags;
   window._wcpResolveTag = resolveTag;
   window._wcpGetRecentActivity = getRecentActivity;
-  window._wcpGetImages = getImages;
+
+  // Planned sitemap helpers (Phase 3) — UI/AI code in Part 2 calls into
+  // these so the on-disk tree shape stays consistent.
+  window._wcpGetPlannedTree         = getPlannedTree;
+  window._wcpEnsurePlannedTree      = ensurePlannedTree;
+  window._wcpGetPlannedNode         = getPlannedNode;
+  window._wcpGetPlannedChildren     = getPlannedChildren;
+  window._wcpGetPlannedAncestors    = getPlannedAncestors;
+  window._wcpGetPlannedDescendants  = getPlannedDescendants;
+  window._wcpCreatePlannedNode      = createPlannedNode;
+  window._wcpUpdatePlannedNode      = updatePlannedNode;
+  window._wcpDeletePlannedNode      = deletePlannedNode;
+  window._wcpMovePlannedNode        = movePlannedNode;
+  window._wcpGetLivePagesForHub     = getLivePagesForHub;
 
   // Auto-status + quick-advance (used by the ▶ button in the content-detail
   // header; Part 2A imports these alongside maybeAdvanceStatus)

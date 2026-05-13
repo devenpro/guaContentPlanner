@@ -17,7 +17,7 @@
     // UI state
     currentView: 'dashboard', previousView: null,
     selectedContentId: null, currentStep: 'info',
-    selectedHubId: null, selectedTemplateId: null, hubDetailTab: 'tree',
+    selectedHubId: null, selectedTemplateId: null,
     settingsTab: 'workspace', researchMode: 'keywords',
     // Sequential research flow state
     researchFlow: { step: 1, sessionId: '', topics: {}, selectedTopics: [] },
@@ -25,27 +25,28 @@
     contentFilter: { search: '', statuses: [], type: '', hub: '', tag: '', sortBy: 'updated', sortDir: 'desc', showClosed: false, groupBy: 'none', advancedOpen: false },
     // Activity view state
     activityFilter: { search: '', type: '' },
-    // Tags view state
-    selectedTagId: null,
     // Content Writer integration
     contentWriterItems: [], contentWriterMap: {},
     brandId: '', nodeId: '',
-    // Images view state
-    images: [], imageMap: {}, $imageField: null,
-    selectedImageId: null,
-    imageFilter: { search: '', category: '', tag: '', star: false, sort: 'newest' },
     // Shell UI
     sidebarCollapsed: false,
     // Drupal refs + flags
     $textarea: null, $metaTextarea: null, $activityTextarea: null, $sitemapTextarea: null, $form: null, $submitBtn: null,
     _initializing: false, initialized: false, _part2bTimeout: false,
     dirty: false, autoSaveTimer: null, lastSaved: null,
-    // Sitemap view state
+    // Sitemap view state (live import + planned per-hub trees)
     sitemapPageMap: {}, sitemapPageByUrl: {}, sitemapGroupMap: {},
     totalSitemapPages: 0,
     selectedSitemapPageId: null,
     sitemapFilter: { search: '', priority: '', group: '', showRemoved: false, sort: 'url', sortBy: 'url' },
     sitemapTreeExpanded: {},   // groupId -> true/false (manual groups only)
-    sitemapViewMode: 'flat'    // 'flat' (sorted list) | 'by_group' (manual user-defined groups)
+    sitemapViewMode: 'flat',   // 'flat' (sorted list) | 'by_group' (manual user-defined groups)
+    // Planned mode — per-hub planned trees with drag/drop editor
+    sitemapMode: 'live',       // 'live' (imported pages) | 'planned' (hub tree)
+    sitemapPlanHubId: '',      // which hub's planned tree is being edited
+    selectedPlannedNodeId: null,
+    plannedTreeExpanded: {},   // node_id -> bool (default true, only stored when toggled)
+    // Planned-tree maps populated in buildMaps()
+    plannedNodeMap: {}, plannedNodeCountByHub: {}, sitemapPagesByHub: {}
   };
 

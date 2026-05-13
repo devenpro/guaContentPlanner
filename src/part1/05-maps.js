@@ -70,11 +70,6 @@
       if (cwLinks[cwli].planner_id) S.contentWriterMap[cwLinks[cwli].planner_id] = cwLinks[cwli];
     }
 
-    // Image category map
-    S.imageCategoryMap = {};
-    var cats = (S.meta && S.meta.image_categories) || [];
-    for (var cci = 0; cci < cats.length; cci++) S.imageCategoryMap[cats[cci].id] = cats[cci];
-
     // Sitemap maps — page by id + by canonical url, group by id.
     // sitemapLinksByTo / sitemapLinksByFrom are cached counts used to render
     // inbound/outbound pills in the sitemap view without re-scanning the
@@ -116,6 +111,39 @@
       if (sl.from_content_id) {
         S.sitemapLinksByFrom[sl.from_content_id] = S.sitemapLinksByFrom[sl.from_content_id] || { selected: 0, exported: 0, published: 0 };
         S.sitemapLinksByFrom[sl.from_content_id][sl.state] = (S.sitemapLinksByFrom[sl.from_content_id][sl.state] || 0) + 1;
+      }
+    }
+
+    // Planned sitemap maps — node-id → node, plus per-hub count for the
+    // hub list/sidebar. Trees are stored per hub (sitemap.planned[hubId])
+    // and built lazily; nothing here forces a tree to exist for every hub.
+    S.plannedNodeMap = {};
+    S.plannedNodeCountByHub = {};
+    var planned = sitemap.planned || {};
+    for (var phid in planned) {
+      var tree = planned[phid];
+      if (!tree || !Array.isArray(tree.nodes)) continue;
+      S.plannedNodeCountByHub[phid] = tree.nodes.length;
+      for (var pni = 0; pni < tree.nodes.length; pni++) {
+        S.plannedNodeMap[tree.nodes[pni].id] = tree.nodes[pni];
+      }
+    }
+
+    // Live-page-by-hub index — supports the hybrid binding (primary hub_id
+    // plus secondary tag_hub_ids[]). A page appears under its primary hub
+    // AND every tagged hub, so hub views can show full coverage.
+    S.sitemapPagesByHub = {};
+    for (var spi2 = 0; spi2 < pages.length; spi2++) {
+      var p2 = pages[spi2];
+      if (p2.status === 'removed') continue;
+      if (p2.hub_id) {
+        (S.sitemapPagesByHub[p2.hub_id] = S.sitemapPagesByHub[p2.hub_id] || []).push(p2);
+      }
+      var thids = Array.isArray(p2.tag_hub_ids) ? p2.tag_hub_ids : [];
+      for (var thi = 0; thi < thids.length; thi++) {
+        if (thids[thi] && thids[thi] !== p2.hub_id) {
+          (S.sitemapPagesByHub[thids[thi]] = S.sitemapPagesByHub[thids[thi]] || []).push(p2);
+        }
       }
     }
   }

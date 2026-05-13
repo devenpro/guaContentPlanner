@@ -59,6 +59,7 @@
     var activeAdvCount = 0;
     if (f.type) activeAdvCount++;
     if (f.hub) activeAdvCount++;
+    if (f.tag) activeAdvCount++;
     if (f.statuses && f.statuses.length) activeAdvCount++;
     if (f.showClosed) activeAdvCount++;
     html += '<button class="wcp-cl-filters-toggle' + (f.advancedOpen ? ' is-open' : '') + '" data-action="toggle-content-advanced">';
@@ -98,6 +99,22 @@
     }
     html += '</select></div>';
 
+    // Tag filter — alphabetical list of all tags with content counts. Counts
+    // are computed once per render; tag list is usually short enough that
+    // this is cheap. Tags are created inline from the content detail view —
+    // there's no longer a separate Tags page.
+    var allTags = (S.data.tags || []).slice().sort(function(a, b) { return (a.name || '').localeCompare(b.name || ''); });
+    if (allTags.length) {
+      html += '<div style="margin-top:var(--wcp-space-1)">';
+      html += '<select class="wcp-select wcp-select-sm" id="wcpFilterTag" style="width:100%"><option value="">All tags</option>';
+      for (var fti2 = 0; fti2 < allTags.length; fti2++) {
+        var ftg = allTags[fti2];
+        var tcount = (S.data.content || []).filter(function(c) { return (c.tags || []).indexOf(ftg.id) > -1; }).length;
+        html += '<option value="' + esc(ftg.id) + '"' + (f.tag === ftg.id ? ' selected' : '') + '>' + esc(ftg.name) + ' (' + tcount + ')</option>';
+      }
+      html += '</select></div>';
+    }
+
     // Archived toggle
     var archivedCount = (S.archivedContent || 0) + (S.rejectedContent || 0);
     html += '<label class="wcp-mini-toggle" style="display:flex;align-items:center;gap:6px;margin-top:var(--wcp-space-2);font-size:var(--wcp-font-size-xs);color:var(--wcp-text-muted);cursor:pointer;user-select:none">';
@@ -126,6 +143,7 @@
     if (f.search)   chips.push({ key: 'search',  label: 'Search: "' + f.search + '"' });
     if (f.type && S.contentTypeMap[f.type])  chips.push({ key: 'type', label: 'Type: ' + S.contentTypeMap[f.type].name });
     if (f.hub && S.hubMap[f.hub])            chips.push({ key: 'hub',  label: 'Hub: ' + S.hubMap[f.hub].name });
+    if (f.tag && S.tagMap[f.tag])            chips.push({ key: 'tag',  label: 'Tag: ' + S.tagMap[f.tag].name });
     if (f.statuses && f.statuses.length)     chips.push({ key: 'stage', label: 'Stage: ' + (CONTENT_STATUSES[f.statuses[0]] || {label: f.statuses[0]}).label });
     if (!chips.length) return '';
     var html = '<div class="wcp-cl-active-filters">';
@@ -170,6 +188,7 @@
     }
     if (f.type) items = items.filter(function(c) { return c.content_type_id === f.type; });
     if (f.hub) items = items.filter(function(c) { return c.hub_id === f.hub; });
+    if (f.tag) items = items.filter(function(c) { return (c.tags || []).indexOf(f.tag) > -1; });
     if (hasExplicitStatus) items = items.filter(function(c) { return f.statuses.indexOf(c.status) > -1; });
     // Sort
     var priorityRank = { 'urgent': 0, 'high': 1, 'medium': 2, 'low': 3, '': 4 };

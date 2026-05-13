@@ -9,7 +9,7 @@
   var badge, statusBadge, priorityBadge, scoreBadge, progressBar;
   var getHubClusters, getHubContent, getClusterContent;
   var getContentType, getTemplate, getAllTags, resolveTag;
-  var getRecentActivity, getImages;
+  var getRecentActivity;
   var evaluateAutoStatus, maybeAdvanceStatus;
   var createHub, createCluster, createContent, saveContentField;
   var getFilteredContent, renderContentListItems;
@@ -53,7 +53,6 @@
     getClusterContent = window._wcpGetClusterContent; getContentType = window._wcpGetContentType;
     getTemplate = window._wcpGetTemplate; getAllTags = window._wcpGetAllTags;
     resolveTag = window._wcpResolveTag; getRecentActivity = window._wcpGetRecentActivity;
-    getImages = window._wcpGetImages;
     evaluateAutoStatus = window._wcpEvaluateAutoStatus; maybeAdvanceStatus = window._wcpMaybeAdvanceStatus;
     createHub = window._wcpCreateHub; createCluster = window._wcpCreateCluster;
     createContent = window._wcpCreateContent; saveContentField = window._wcpSaveContentField;
@@ -82,7 +81,6 @@
     var R = window._wcpRenderers = window._wcpRenderers || {};
     R.researchView = renderResearchView; R.setupResearchEvents = setupResearchEvents;
     R.settingsView = renderSettingsView; R.setupSettingsEvents = setupSettingsEvents;
-    R.imagesView = renderImagesView; R.setupImagesEvents = setupImagesEvents;
 
     // Replace Part 1's placeholder wizard with the full wizard
     window._wcpRenderSetupWizard = renderFullSetupWizard;

@@ -13,7 +13,6 @@
     html += '<div class="wcp-settings-section"><h3>' + icon('list-check') + ' Included Data</h3>';
     var toggles = [
       { key: 'include_writing_instructions', label: 'Writing Instructions', desc: 'AI-generated or manual writing brief' },
-      { key: 'include_media_brief', label: 'Media Brief', desc: 'Image concepts and style direction' },
       { key: 'include_link_map', label: 'Internal Link Map', desc: 'Planned internal links with anchors' },
       { key: 'include_schema_plan', label: 'Schema Plan', desc: 'Schema types and section annotations' },
     ];

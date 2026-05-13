@@ -45,11 +45,9 @@
     var builtInRenderers = {
       'dashboard': renderDashboardView,
       'hubs': renderHubsView,
-      'hub-detail': renderHubsView,  // hub-detail now redirects to hubs split-pane (S.selectedHubId already set)
       'content': renderContentView,
       'types': renderTypesView,
       'templates': renderTemplatesView,
-      'tags': renderTagsView,
       'activity': renderActivityView,
       'sitemap': renderSitemapView
     };

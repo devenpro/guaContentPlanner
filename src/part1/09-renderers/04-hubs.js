@@ -71,6 +71,7 @@
     html += '<div class="wcp-step-actions">';
     html += '<button class="wcp-btn-ai wcp-btn-sm" data-action="ai-plan-this-hub" data-hub="' + esc(hub.id) + '" title="AI proposes a complete cluster structure for this hub">' + icon('sparkles') + ' Plan this Hub</button>';
     html += '<button class="wcp-btn-ai wcp-btn-sm" data-action="ai-gap-analysis" data-hub="' + esc(hub.id) + '" title="AI proposes new clusters to fill coverage gaps">' + icon('sparkles') + ' Gap Analysis</button>';
+    html += '<button class="wcp-btn-ai wcp-btn-sm" data-action="ai-plan-calendar" data-hub="' + esc(hub.id) + '" title="AI plans an 8-item, 4-week content calendar for this hub">' + icon('sparkles') + ' Plan Calendar</button>';
     html += '<button class="wcp-btn wcp-btn-primary wcp-btn-sm" data-action="go-view" data-view="research">' + icon('flask') + ' Research</button>';
     html += '</div></div>';
 
@@ -139,8 +140,20 @@
     html += renderHubClusters(hub, clusters);
     html += '</div>';
 
-    // Gaps (collapsible)
+    // Sitemap (collapsible) — quick view of this hub's planned tree + live
+    // pages, with a CTA to open the Sitemap planned-mode editor. Counts only;
+    // full editor lives in Sitemap → Planned.
     html += '<div class="wcp-collapsible-section" style="margin-top:var(--wcp-space-4)">';
+    html += '<div class="wcp-collapsible-toggle" data-action="toggle-collapsible">';
+    html += '<h3 style="font-size:var(--wcp-font-size-base)">' + icon('diagram-project') + ' Sitemap</h3>';
+    html += '<span class="wcp-collapsible-chevron">' + icon('chevron-down') + '</span>';
+    html += '</div>';
+    html += '<div class="wcp-collapsible-body" style="display:none">';
+    html += renderHubSitemap(hub);
+    html += '</div></div>';
+
+    // Gaps (collapsible)
+    html += '<div class="wcp-collapsible-section" style="margin-top:var(--wcp-space-3)">';
     html += '<div class="wcp-collapsible-toggle" data-action="toggle-collapsible">';
     html += '<h3 style="font-size:var(--wcp-font-size-base)">' + icon('circle-exclamation') + ' Gaps</h3>';
     html += '<span class="wcp-collapsible-chevron">' + icon('chevron-down') + '</span>';
@@ -228,159 +241,6 @@
     return html;
   }
 
-  // ─── HUB DETAIL VIEW (Stage 2.3) ────────────────────
-  function renderHubDetailView() {
-    var hub = S.hubMap[S.selectedHubId];
-    if (!hub) {
-      return '<div class="wcp-view"><div class="wcp-empty-state">' +
-        '<div class="wcp-empty-state-icon">' + icon('sitemap') + '</div>' +
-        '<div class="wcp-empty-state-title">Hub not found</div>' +
-        '<button class="wcp-btn wcp-btn-primary" data-action="go-view" data-view="hubs">' + icon('arrow-left') + ' Back to Hubs</button>' +
-        '</div></div>';
-    }
-
-    var clusters = getHubClusters(hub.id);
-    var content = getHubContent(hub.id);
-    var pillarContent = hub.pillar_content_id ? S.contentMap[hub.pillar_content_id] : null;
-
-    var html = '<div class="wcp-view">';
-    // Breadcrumb
-    html += '<div class="wcp-header-breadcrumb" style="margin-bottom:var(--wcp-space-2)">';
-    html += '<a href="#" data-action="go-view" data-view="dashboard">Dashboard</a>';
-    html += '<span class="wcp-header-breadcrumb-sep">' + icon('chevron-right') + '</span>';
-    html += '<a href="#" data-action="go-view" data-view="hubs">Hubs</a>';
-    html += '<span class="wcp-header-breadcrumb-sep">' + icon('chevron-right') + '</span>';
-    html += '<span class="wcp-header-breadcrumb-current">' + esc(hub.name) + '</span>';
-    html += '</div>';
-
-    // Header with edit button
-    html += '<div class="wcp-view-header"><div class="wcp-view-header-left">';
-    html += '<h1 style="color:' + (hub.color || 'var(--wcp-primary)') + '">' + esc(hub.name) + '</h1>';
-    html += '<button class="wcp-btn-icon" data-action="edit-hub" data-id="' + esc(hub.id) + '" title="Edit hub">' + icon('pen') + '</button>';
-    html += '</div>';
-    html += '<div class="wcp-view-header-right">';
-    html += '<button class="wcp-btn-ai wcp-btn-sm" data-action="ai-plan-this-hub" data-hub="' + esc(hub.id) + '" title="AI proposes a complete cluster structure for this hub">' + icon('sparkles') + ' Plan this Hub</button>';
-    html += '<button class="wcp-btn-ai wcp-btn-sm" data-action="ai-gap-analysis" data-hub="' + esc(hub.id) + '" title="AI proposes new clusters to fill coverage gaps">' + icon('sparkles') + ' Gap Analysis</button>';
-    html += '<button class="wcp-btn wcp-btn-primary wcp-btn-sm" data-action="go-view" data-view="research">' + icon('flask') + ' Research</button>';
-    html += '</div></div>';
-
-    // Hub description (if set)
-    if (hub.description) {
-      html += '<p class="wcp-text-sm wcp-text-muted" style="margin-bottom:var(--wcp-space-4)">' + esc(hub.description) + '</p>';
-    }
-
-    // Pillar bar
-    html += '<div class="wcp-pillar-bar">';
-    html += '<span style="font-size:var(--wcp-font-size-lg)">' + icon('crown') + '</span>';
-    if (pillarContent) {
-      html += '<div style="flex:1"><div class="wcp-pillar-bar-label">PILLAR CONTENT</div>';
-      html += '<div class="wcp-pillar-bar-title">' + esc(pillarContent.title) + '</div></div>';
-      html += statusBadge(pillarContent.status);
-      html += '<button class="wcp-btn wcp-btn-sm" data-action="select-content" data-id="' + esc(pillarContent.id) + '">View</button>';
-    } else {
-      html += '<div style="flex:1"><div class="wcp-pillar-bar-label" style="color:var(--wcp-warning)">NO PILLAR CONTENT</div>';
-      html += '<div class="wcp-pillar-bar-title" style="color:var(--wcp-text-secondary)">Create pillar content to anchor this hub\'s authority</div></div>';
-      html += '<button class="wcp-btn wcp-btn-primary wcp-btn-sm" data-action="create-pillar" data-hub="' + esc(hub.id) + '">' + icon('plus') + ' Create Pillar</button>';
-    }
-    html += '</div>';
-
-    // ── Clusters section (always visible, primary content) ──
-    html += '<div style="margin-top:var(--wcp-space-4)">';
-    html += '<div class="wcp-flex-between" style="margin-bottom:var(--wcp-space-3)">';
-    html += '<h3 style="font-size:var(--wcp-font-size-base)">' + icon('bookmark') + ' Clusters (' + clusters.length + ')</h3>';
-    html += '<button class="wcp-btn-ai wcp-btn-sm" data-action="ai-plan-calendar" data-hub="' + esc(hub.id) + '">' + icon('sparkles') + ' Plan Calendar</button>';
-    html += '</div>';
-
-    // Quick-add cluster row
-    html += '<div class="wcp-hub-quick-add">';
-    html += '<input type="text" class="wcp-input wcp-input-sm" id="wcpQuickCluster" placeholder="New cluster name..." style="flex:1">';
-    html += '<button class="wcp-btn wcp-btn-sm wcp-btn-primary" data-action="quick-add-cluster" data-hub="' + esc(hub.id) + '">' + icon('plus') + ' Add</button>';
-    html += '</div>';
-
-    html += renderHubClusters(hub, clusters);
-    html += '</div>';
-
-    // ── Gaps section (collapsible) ──
-    html += '<div class="wcp-collapsible-section" style="margin-top:var(--wcp-space-4)">';
-    html += '<div class="wcp-collapsible-toggle" data-action="toggle-collapsible">';
-    html += '<h3 style="font-size:var(--wcp-font-size-base)">' + icon('circle-exclamation') + ' Gaps</h3>';
-    html += '<span class="wcp-collapsible-chevron">' + icon('chevron-down') + '</span>';
-    html += '</div>';
-    html += '<div class="wcp-collapsible-body" style="display:none">';
-    html += renderHubGaps(hub, clusters, content);
-    html += '</div></div>';
-
-    // ── Links section (collapsible) ──
-    html += '<div class="wcp-collapsible-section" style="margin-top:var(--wcp-space-3)">';
-    html += '<div class="wcp-collapsible-toggle" data-action="toggle-collapsible">';
-    html += '<h3 style="font-size:var(--wcp-font-size-base)">' + icon('link') + ' Internal Links</h3>';
-    html += '<span class="wcp-collapsible-chevron">' + icon('chevron-down') + '</span>';
-    html += '</div>';
-    html += '<div class="wcp-collapsible-body" style="display:none">';
-    html += renderHubLinks(hub, content);
-    html += '</div></div>';
-
-    html += '</div>';
-    return html;
-  }
-
-  function renderHubTree(hub, clusters, content) {
-    var html = '<div class="wcp-card"><div class="wcp-card-body wcp-tree-container" style="min-height:300px">';
-    // Root node
-    html += '<div style="text-align:center;margin-bottom:var(--wcp-space-4)">';
-    html += '<div class="wcp-tree-root" style="background:' + (hub.color || 'var(--wcp-primary)') + '">' + icon('crown') + ' ' + esc(hub.name) + '</div>';
-    html += '<div class="wcp-tree-connector"></div>';
-    html += '</div>';
-
-    if (clusters.length === 0) {
-      html += '<div class="wcp-empty-state" style="padding:var(--wcp-space-6)">';
-      html += '<p class="wcp-text-sm wcp-text-muted">No clusters yet. Add clusters through research or manually.</p>';
-      html += '<button class="wcp-btn wcp-btn-sm" data-action="create-cluster" data-hub="' + esc(hub.id) + '">' + icon('plus') + ' Add Cluster</button>';
-      html += '</div>';
-    } else {
-      // Determine grid columns based on cluster count
-      var cols = clusters.length <= 2 ? clusters.length : clusters.length <= 4 ? clusters.length : 4;
-      html += '<div class="wcp-tree-branches" style="grid-template-columns:repeat(' + cols + ',1fr)">';
-      for (var ci = 0; ci < clusters.length; ci++) {
-        var cl = clusters[ci];
-        var clContent = getClusterContent(cl.id);
-        var stCfg = CLUSTER_STATUSES[cl.status] || { label: cl.status, color: '#80868b' };
-        var isDashed = cl.status === 'planned' || clContent.length === 0;
-
-        html += '<div>';
-        html += '<div class="wcp-tree-connector"></div>';
-        html += '<div class="wcp-tree-node' + (isDashed ? ' wcp-tree-node-dashed' : '') + '" style="border-color:' + stCfg.color + '" data-action="select-cluster" data-id="' + esc(cl.id) + '">';
-        // Header
-        html += '<div class="wcp-tree-node-header">';
-        html += '<span class="wcp-tree-node-title">' + esc(truncate(cl.name, 22)) + '</span>';
-        html += badge(stCfg.label, stCfg.color);
-        html += '</div>';
-        // Content items
-        if (clContent.length > 0) {
-          for (var cci = 0; cci < Math.min(clContent.length, 4); cci++) {
-            var c = clContent[cci];
-            var stColor = (CONTENT_STATUSES[c.status] || {}).color || '#80868b';
-            var stIcon = c.status === 'export_ready' || c.status === 'exported' ? '✓' : c.status === 'info' ? '○' : '◑';
-            html += '<div class="wcp-tree-node-item" style="color:' + stColor + '">' + stIcon + ' ' + esc(truncate(c.title, 24)) + '</div>';
-          }
-          if (clContent.length > 4) html += '<div class="wcp-tree-node-item" style="color:var(--wcp-text-muted)">+' + (clContent.length - 4) + ' more</div>';
-        } else {
-          html += '<div class="wcp-tree-node-item" style="color:var(--wcp-warning)">' + icon('circle-exclamation') + ' No content</div>';
-        }
-        html += '</div></div>';
-      }
-      html += '</div>';
-    }
-
-    // Legend
-    html += '<div style="text-align:center;margin-top:var(--wcp-space-4);font-size:var(--wcp-font-size-xs);color:var(--wcp-text-muted)">';
-    html += '✓ Complete &nbsp; ◑ In progress &nbsp; ○ Not started &nbsp; ' + icon('circle-exclamation') + ' Gap — Click nodes to view details';
-    html += '</div>';
-
-    html += '</div></div>';
-    return html;
-  }
-
   function renderHubClusters(hub, clusters) {
     if (clusters.length === 0) {
       var html = '<div class="wcp-card"><div class="wcp-card-body"><div class="wcp-empty-state" style="padding:var(--wcp-space-6)">';
@@ -399,11 +259,20 @@
       var stCfg = CLUSTER_STATUSES[cl.status] || { label: cl.status, color: '#80868b' };
       var doneCount = clContent.filter(function(c) { return c.status === 'export_ready' || c.status === 'exported'; }).length;
 
+      // Planned-tree pages tagged to this cluster (Phase 6 sitemap interlink).
+      // Counted from S.plannedNodeMap which holds nodes from every hub's tree.
+      var clPlannedCount = 0;
+      var pnMap = S.plannedNodeMap || {};
+      for (var pnk in pnMap) { if (pnMap[pnk] && pnMap[pnk].cluster_id === cl.id) clPlannedCount++; }
+
       html += '<div class="wcp-cluster-card">';
       html += '<div style="flex:1;min-width:0">';
       html += '<div style="display:flex;align-items:center;gap:var(--wcp-space-2);margin-bottom:var(--wcp-space-1)">';
       html += '<span style="font-size:var(--wcp-font-size-base);font-weight:700;color:var(--wcp-text-primary)">' + esc(cl.name) + '</span>';
       html += badge(stCfg.label, stCfg.color);
+      if (clPlannedCount > 0) {
+        html += '<span class="wcp-badge wcp-cluster-sitemap-badge" data-action="hub-open-sitemap-planned" data-hub="' + esc(hub.id) + '" title="' + clPlannedCount + ' planned sitemap node' + (clPlannedCount !== 1 ? 's' : '') + ' tagged to this cluster">' + icon('diagram-project') + ' ' + clPlannedCount + '</span>';
+      }
       html += '</div>';
       // Keywords preview
       var kwPreview = (cl.keywords || []).slice(0, 5).map(function(k) { return typeof k === 'string' ? k : (k.keyword || ''); }).filter(Boolean).join(', ');
@@ -483,8 +352,6 @@
     var html = '<div class="wcp-card"><div class="wcp-card-body">';
     html += '<div class="wcp-flex-between" style="margin-bottom:var(--wcp-space-4)">';
     html += '<span style="font-size:var(--wcp-font-size-base);font-weight:700">' + icon('link') + ' Internal Linking Map</span>';
-    // Hidden until AI Optimize Links is implemented (no handler today)
-    // html += '<button class="wcp-btn-ai" data-action="ai-optimize-links" data-hub="' + esc(hub.id) + '">' + icon('sparkles') + ' AI Optimize Links</button>';
     html += '</div>';
 
     // Collect all internal links from content in this hub
@@ -511,8 +378,6 @@
       html += '</div>';
       html += '<div style="text-align:center;padding:var(--wcp-space-4);color:var(--wcp-text-muted)">';
       html += '<p class="wcp-text-sm">No links planned yet. Set up internal links from each content piece\'s detail view.</p>';
-      // Hidden until AI Optimize Links is implemented (no handler today)
-      // html += '<button class="wcp-btn-ai" data-action="ai-optimize-links" data-hub="' + esc(hub.id) + '" style="margin-top:var(--wcp-space-2)">' + icon('sparkles') + ' AI Plan Link Architecture</button>';
       html += '</div>';
     } else {
       for (var lri = 0; lri < links.length; lri++) {
@@ -524,6 +389,58 @@
         if (lr.anchor) html += '<span class="wcp-link-anchor">"' + esc(truncate(lr.anchor, 30)) + '"</span>';
         html += '</div>';
       }
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
+  // Compact sitemap panel on hub detail — counts + a small preview of the
+  // top-level planned nodes. Drives the user into the full Sitemap view for
+  // editing rather than duplicating the tree editor here.
+  function renderHubSitemap(hub) {
+    var plannedCount = (S.plannedNodeCountByHub && S.plannedNodeCountByHub[hub.id]) || 0;
+    var livePages = (S.sitemapPagesByHub && S.sitemapPagesByHub[hub.id]) || [];
+    var tree = (S.data.sitemap && S.data.sitemap.planned && S.data.sitemap.planned[hub.id]) || null;
+    var roots = [];
+    if (tree && Array.isArray(tree.nodes)) {
+      for (var i = 0; i < tree.nodes.length; i++) {
+        if (!(tree.nodes[i].parent_id || '')) roots.push(tree.nodes[i]);
+      }
+    }
+
+    var html = '<div class="wcp-card"><div class="wcp-card-body">';
+    // Summary strip
+    html += '<div class="wcp-hub-sitemap-summary">';
+    html += '<div class="wcp-hub-sitemap-stat"><span class="wcp-hub-sitemap-num">' + plannedCount + '</span><span class="wcp-hub-sitemap-lbl">Planned nodes</span></div>';
+    html += '<div class="wcp-hub-sitemap-stat"><span class="wcp-hub-sitemap-num">' + livePages.length + '</span><span class="wcp-hub-sitemap-lbl">Live pages</span></div>';
+    html += '<div class="wcp-hub-sitemap-actions">';
+    html += '<button class="wcp-btn wcp-btn-primary wcp-btn-sm" data-action="hub-open-sitemap-planned" data-hub="' + esc(hub.id) + '">' + icon('diagram-project') + ' Open planned tree</button>';
+    if (livePages.length) {
+      html += '<button class="wcp-btn wcp-btn-sm wcp-btn-ghost" data-action="hub-open-sitemap-live" data-hub="' + esc(hub.id) + '">' + icon('list') + ' View live pages</button>';
+    }
+    html += '</div>';
+    html += '</div>';
+
+    // Top-level planned preview (max 6)
+    if (roots.length) {
+      html += '<div class="wcp-hub-sitemap-preview">';
+      html += '<div class="wcp-section-label" style="margin-top:var(--wcp-space-3)">' + icon('diagram-project') + ' Top-level pages</div>';
+      var cap = Math.min(roots.length, 6);
+      for (var ri = 0; ri < cap; ri++) {
+        var rn = roots[ri];
+        html += '<div class="wcp-hub-sitemap-row" data-action="hub-open-sitemap-planned" data-hub="' + esc(hub.id) + '" data-node-id="' + esc(rn.id) + '">';
+        html += '<span class="wcp-planned-pip wcp-planned-status-' + (rn.status || 'planned') + '"></span>';
+        html += '<span class="wcp-hub-sitemap-row-label">' + esc(rn.label || '(untitled)') + '</span>';
+        if (rn.status) html += '<span class="wcp-badge wcp-planned-status-badge wcp-planned-status-' + esc(rn.status) + '">' + esc(rn.status) + '</span>';
+        html += '</div>';
+      }
+      if (roots.length > cap) html += '<div class="wcp-text-xs wcp-text-muted" style="padding-top:6px">+ ' + (roots.length - cap) + ' more — open the planned tree to see all.</div>';
+      html += '</div>';
+    } else {
+      html += '<div class="wcp-text-sm wcp-text-muted" style="margin-top:var(--wcp-space-3)">';
+      html += 'No planned sitemap yet. Click <strong>Open planned tree</strong> to start, or let AI plan one for you.';
+      html += '</div>';
     }
 
     html += '</div></div>';

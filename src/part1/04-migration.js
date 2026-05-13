@@ -10,7 +10,7 @@
       research_sessions: [],
       tags: [],
       keyword_groups: [],
-      sitemap: { pages: [], groups: [], links: [] }
+      sitemap: { pages: [], groups: [], links: [], planned: {} }
     };
   }
 
@@ -26,11 +26,10 @@
           primary_markets: [], deadlines: {}
         },
         pipeline_stages: getDefaultPipelineConfig(),
-        brand_context_enabled: { core: true, content: true, seo: true },
+        brand_context_enabled: { core: true, content: true, seo: true, design_guide: true },
         export_config: {
           cw_landing_stage: 'research',
           include_writing_instructions: true,
-          include_media_brief: true,
           include_link_map: true,
           include_schema_plan: true,
           include_research_data: 'summarized',
@@ -41,8 +40,6 @@
         }
       },
       aiPreferences: { appDefault: {}, perAction: {}, lastProvider: '', lastModel: '', defaultInstructions: '' },
-      reference_images: {},
-      image_categories: getDefaultImageCategories(),
       // Persistent snapshot of the last successful brand-data parse.
       // Lets cold loads show brand context immediately while the
       // MutationObserver waits for the real DOM to arrive. Overwritten
@@ -51,9 +48,10 @@
       lastLocation: {
         view: 'dashboard',
         selectedContentId: null, selectedHubId: null, selectedTemplateId: null,
-        selectedTagId: null, selectedImageId: null, selectedSitemapPageId: null,
+        selectedSitemapPageId: null, selectedPlannedNodeId: null,
+        sitemapMode: 'live', sitemapPlanHubId: '',
         currentStep: 'info',
-        hubDetailTab: 'tree', settingsTab: 'workspace', researchTab: 'keywords',
+        settingsTab: 'workspace', researchTab: 'keywords',
         savedAt: ''
       }
     };
@@ -76,17 +74,6 @@
     });
   }
 
-  function getDefaultImageCategories() {
-    return [
-      { id: 'brand_style', label: 'Brand Style', icon: 'palette', color: '#2563eb' },
-      { id: 'blog_header', label: 'Blog Headers', icon: 'image', color: '#7c3aed' },
-      { id: 'social', label: 'Social Media', icon: 'share-nodes', color: '#e85d3a' },
-      { id: 'infographic', label: 'Infographics', icon: 'chart-bar', color: '#0d9488' },
-      { id: 'photography', label: 'Photography', icon: 'camera', color: '#d97706' },
-      { id: 'other', label: 'Other', icon: 'image', color: '#80868b' }
-    ];
-  }
-
   function migrateData() {
     var d = S.data;
     d.hubs = d.hubs || [];
@@ -98,10 +85,16 @@
     d.tags = d.tags || [];
     d.keyword_groups = d.keyword_groups || [];
     d.content_writer_links = d.content_writer_links || [];
-    d.sitemap = d.sitemap || { pages: [], groups: [], links: [] };
-    d.sitemap.pages  = d.sitemap.pages  || [];
-    d.sitemap.groups = d.sitemap.groups || [];
-    d.sitemap.links  = d.sitemap.links  || [];
+    d.sitemap = d.sitemap || { pages: [], groups: [], links: [], planned: {} };
+    d.sitemap.pages   = d.sitemap.pages   || [];
+    d.sitemap.groups  = d.sitemap.groups  || [];
+    d.sitemap.links   = d.sitemap.links   || [];
+    // Planned sitemap = one nested tree per hub. Key = hub_id, value =
+    // { root_id, nodes: [{ id, parent_id, ... }] }. Phase 3 introduces the
+    // shape; Phase 4 builds the editor, Phase 5 adds AI planning. Live pages
+    // in d.sitemap.pages[] are unaffected — the two trees co-exist and can
+    // be diff'd later.
+    d.sitemap.planned = d.sitemap.planned || {};
 
     // Ensure each hub has all fields
     for (var hi = 0; hi < d.hubs.length; hi++) {
@@ -157,7 +150,10 @@
       c.outline = c.outline || { sections: [], approved: false };
       c.aeo_gseo = c.aeo_gseo || { schema_types: [], qa_blocks: [], citation_score: 0, ai_overview_score: 0, eeat_status: {}, seo_score: 0, gseo_score: 0, aeo_score: 0 };
       c.internal_links = c.internal_links || [];
-      c.media_brief = c.media_brief || { image_concepts: [], style_references: [], brand_image_ids: [] };
+      // media_brief / image_concepts / style_references / brand_image_ids were
+      // part of the now-removed reference-images feature. Strip on load so the
+      // data drops out of S.data on the next syncToTextarea() save.
+      if (c.media_brief !== undefined) delete c.media_brief;
       c.export = c.export || { exported_at: '', cw_node_id: '', export_version: '', writing_instructions: '' };
       c.direction = c.direction || { headline_hints: '', structure_notes: '', writing_instructions: '', schema_direction: [], seo_notes: '' };
       // Migrate writing_instructions from export to direction if direction is empty
@@ -204,6 +200,43 @@
       sp.notes = sp.notes || '';
       sp.imported_at = sp.imported_at || new Date().toISOString();
       sp.updated_at = sp.updated_at || sp.imported_at;
+      // Hybrid hub binding (Phase 3) — every live page may have ONE primary
+      // hub for tree coloring and tag arrays for secondary cross-references.
+      // All optional; absent means "Unassigned" in the by-hub view.
+      sp.hub_id          = sp.hub_id          || '';
+      sp.cluster_id      = sp.cluster_id      || '';
+      if (!Array.isArray(sp.tag_hub_ids))     sp.tag_hub_ids     = [];
+      if (!Array.isArray(sp.tag_cluster_ids)) sp.tag_cluster_ids = [];
+    }
+
+    // Migrate planned sitemap trees — one document per hub. Each tree carries
+    // a self-contained nodes[] array (parent_id refs); root nodes have
+    // parent_id === ''. Sanitize against orphaned trees (hub deleted) by
+    // dropping planned[hubId] when the hub no longer exists.
+    var planned = d.sitemap.planned;
+    for (var phid in planned) {
+      var tree = planned[phid];
+      if (!tree || typeof tree !== 'object') { delete planned[phid]; continue; }
+      tree.nodes = Array.isArray(tree.nodes) ? tree.nodes : [];
+      tree.root_id = tree.root_id || '';
+      for (var pni = 0; pni < tree.nodes.length; pni++) {
+        var pn = tree.nodes[pni];
+        pn.id              = pn.id || generateId('pln');
+        pn.parent_id       = pn.parent_id || '';
+        pn.label           = pn.label || '';
+        pn.slug            = pn.slug || '';
+        pn.description     = pn.description || '';
+        pn.priority        = (pn.priority === 1 || pn.priority === 2 || pn.priority === 3) ? pn.priority : null;
+        pn.intent          = pn.intent || '';                // informational / commercial / etc.
+        pn.content_type_id = pn.content_type_id || '';
+        pn.content_id      = pn.content_id || '';            // optional link to planner content
+        pn.cluster_id      = pn.cluster_id || '';            // optional secondary cluster tag
+        pn.status          = pn.status || 'planned';         // 'planned' | 'proposed' (AI) | 'promoted' (linked to live page)
+        pn.live_page_id    = pn.live_page_id || '';          // set when promoted to a live sitemap page
+        pn.ai_meta         = pn.ai_meta || null;             // {rationale, generated_at, ...}
+        pn.created         = pn.created || new Date().toISOString();
+        pn.updated         = pn.updated || pn.created;
+      }
     }
 
     // Migrate sitemap links — only committed states persist
@@ -276,7 +309,9 @@
         m.settings.pipeline_stages.push({ id: pstep.key, name: pstep.label, required_fields: [], auto_advance: true });
       }
     }
-    m.settings.brand_context_enabled = m.settings.brand_context_enabled || { core: true, content: true, seo: true };
+    m.settings.brand_context_enabled = m.settings.brand_context_enabled || { core: true, content: true, seo: true, design_guide: true };
+    // Backfill design_guide toggle for workspaces saved before it existed
+    if (m.settings.brand_context_enabled.design_guide === undefined) m.settings.brand_context_enabled.design_guide = true;
     m.settings.export_config = m.settings.export_config || getDefaultMeta().settings.export_config;
     m.aiPreferences = m.aiPreferences || { appDefault: {}, perAction: {}, lastProvider: '', lastModel: '', defaultInstructions: '' };
     m.aiPreferences.perAction = m.aiPreferences.perAction || {};
@@ -287,8 +322,10 @@
       var _pa = m.aiPreferences.perAction[_paKeys[_pi]];
       if (_pa && typeof _pa === 'object' && _pa.instructions == null) _pa.instructions = '';
     }
-    m.reference_images = m.reference_images || {};
-    m.image_categories = m.image_categories || getDefaultImageCategories();
+    // Reference-images feature was removed — strip persisted meta so it
+    // drops from saved JSON on the next sync.
+    if (m.reference_images !== undefined) delete m.reference_images;
+    if (m.image_categories !== undefined) delete m.image_categories;
     m.brand_cache = m.brand_cache || { identity: {}, core: null, content: null, seo: null, cachedAt: '' };
     m.lastLocation = m.lastLocation || getDefaultMeta().lastLocation;
     // Research view: collapsed from 4-mode flow to 2 tabs (keywords / competitor).

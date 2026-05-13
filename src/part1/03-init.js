@@ -52,11 +52,11 @@
     // Timeout: if Part 2B hasn't loaded in 12s, show helpful messages
     setTimeout(function() {
       var R = window._wcpRenderers || {};
-      if (!R.researchView || !R.settingsView || !R.imagesView) {
+      if (!R.researchView || !R.settingsView) {
         S._part2bTimeout = true;
         var diag = 'Part2A=' + !!window._wcpPart2A + ', Part2AReady=' + !!S._part2aReady + ', Renderers=' + Object.keys(R).join(',');
         console.warn('[WCP] Part 2B not loaded after 12s — ' + diag);
-        if (S.currentView === 'research' || S.currentView === 'settings' || S.currentView === 'images') renderCurrentView();
+        if (S.currentView === 'research' || S.currentView === 'settings') renderCurrentView();
       }
     }, 12000);
   }
@@ -106,14 +106,8 @@
     S.$activityTextarea.closest('.field--name-field-activity-log').hide();
     S.$form.find('.node-form-options, .field--name-title, .form-actions').hide();
 
-    // Detect image field
-    S.$imageField = S.$form.find('.field--name-field-images');
-    if (S.$imageField.length) {
-      S.$imageField.hide();
-      console.log('[WCP] Image field detected');
-    } else {
-      console.log('[WCP] No image field found (field_images)');
-    }
+    // Reference-images / field_images is hidden via Drupal field permissions —
+    // the planner no longer reads or writes it.
 
     console.log('[WCP] Drupal form detected — data: ' + (S.$textarea.val() || '').length + ' chars, meta: ' + (S.$metaTextarea.val() || '').length + ' chars');
     return true;
@@ -171,9 +165,6 @@
 
     // Parse brand data from page DOM
     parseBrandData();
-
-    // Parse images from Drupal field
-    parseImageField();
 
     // Parse Content Writer list from page DOM
     parseContentWriterList();
@@ -297,50 +288,6 @@
       if (!seeded) console.log('[WCP] Brand data div not found on page — observer will retry');
     }
     watchForBrandData();
-  }
-
-  function parseImageField() {
-    S.images = []; S.imageMap = {};
-    if (!S.$imageField || !S.$imageField.length) return;
-    var imgMeta = (S.meta && S.meta.reference_images) || {};
-
-    S.$imageField.find('.image-widget, [data-drupal-selector*="edit-field-images"]').each(function(idx) {
-      var $widget = $(this);
-      var $img = $widget.find('.image-preview img, .image-style-thumbnail, img').first();
-      var $fileLink = $widget.find('.file a, a[href*="/files/"]').first();
-      var imgUrl = '';
-      if ($img.length) imgUrl = $img.attr('src') || '';
-      if (!imgUrl && $fileLink.length) imgUrl = $fileLink.attr('href') || '';
-      if (!imgUrl) return;
-
-      var fid = '';
-      var $fidInput = $widget.find('input[name*="fids"], input[data-fid]');
-      if ($fidInput.length) fid = $fidInput.data('fid') || $fidInput.val() || '';
-      if (!fid) {
-        var $anyInput = $widget.find('input[name*="field_images"]').first();
-        if ($anyInput.length) {
-          var match = $anyInput.attr('name').match(/field_images\[(\d+)\]/);
-          if (match) fid = 'idx_' + match[1];
-        }
-      }
-      if (!fid) fid = 'img_' + idx;
-
-      var filename = '';
-      if ($fileLink.length) filename = $fileLink.text().trim();
-      if (!filename && imgUrl) filename = imgUrl.split('/').pop().split('?')[0];
-
-      var meta = imgMeta[String(fid)] || {};
-      S.images.push({
-        fid: String(fid), url: imgUrl, filename: filename,
-        alt: $img.attr('alt') || '', index: idx,
-        category: meta.category || '', tags: meta.tags || [],
-        star: !!meta.star, description: meta.description || '',
-        notes: meta.notes || '', usage: meta.usage || []
-      });
-    });
-
-    for (var i = 0; i < S.images.length; i++) S.imageMap[S.images[i].fid] = S.images[i];
-    console.log('[WCP] Parsed ' + S.images.length + ' reference images');
   }
 
   // Merge Drupal view DOM `.content-production-item` entries with the persisted

@@ -26,12 +26,64 @@
       // Also validate the stored id still exists (page may have been deleted)
       if (!S.sitemapPageMap[S.selectedSitemapPageId]) S.selectedSitemapPageId = null;
     }
+    // Default the planned-mode hub to the first hub when nothing's chosen.
+    if (!S.sitemapPlanHubId) {
+      var firstHub = (S.data.hubs || [])[0];
+      if (firstHub) S.sitemapPlanHubId = firstHub.id;
+    }
+
     var html = '<div class="wcp-view wcp-view-sitemap">';
     html += renderSitemapSummary();
-    html += '<div class="wcp-split-pane">';
-    html += renderSitemapListPane();
-    html += '<div class="wcp-detail-pane" id="wcpSitemapDetailPane">' + renderSitemapDetailPane() + '</div>';
-    html += '</div></div>';
+    html += renderSitemapModeBar();
+    if (S.sitemapMode === 'planned') {
+      html += renderSitemapPlannedMode();
+    } else {
+      html += '<div class="wcp-split-pane">';
+      html += renderSitemapListPane();
+      html += '<div class="wcp-detail-pane" id="wcpSitemapDetailPane">' + renderSitemapDetailPane() + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  // Mode bar — switches between the live (imported) view and the per-hub
+  // planned tree editor. The mode is sticky (persists via S.sitemapMode +
+  // lastLocation) so a user returning to Sitemap lands where they left off.
+  function renderSitemapModeBar() {
+    var mode = S.sitemapMode === 'planned' ? 'planned' : 'live';
+    var hubs = (S.data.hubs || []).slice().sort(function(a, b) { return (a.name || '').localeCompare(b.name || ''); });
+    var liveCount = ((S.data.sitemap && S.data.sitemap.pages) || []).filter(function(p) { return p.status !== 'removed'; }).length;
+    var plannedCount = 0;
+    if (S.sitemapPlanHubId && S.plannedNodeCountByHub) plannedCount = S.plannedNodeCountByHub[S.sitemapPlanHubId] || 0;
+
+    var html = '<div class="wcp-sitemap-modebar">';
+    html += '<div class="wcp-sitemap-modebar-tabs" role="tablist">';
+    html += '<button class="wcp-sitemap-modebar-tab' + (mode === 'live' ? ' is-active' : '') + '" data-action="sitemap-set-mode" data-mode="live" role="tab">';
+    html += icon('list') + ' Live <span class="wcp-text-muted">(' + liveCount + ')</span>';
+    html += '</button>';
+    html += '<button class="wcp-sitemap-modebar-tab' + (mode === 'planned' ? ' is-active' : '') + '" data-action="sitemap-set-mode" data-mode="planned" role="tab">';
+    html += icon('diagram-project') + ' Planned';
+    if (mode === 'planned') html += ' <span class="wcp-text-muted">(' + plannedCount + ')</span>';
+    html += '</button>';
+    html += '</div>';
+    // Hub picker (planned mode only — live mode shows all pages across hubs)
+    if (mode === 'planned') {
+      html += '<div class="wcp-sitemap-modebar-hub">';
+      html += '<label class="wcp-text-xs wcp-text-muted" style="margin-right:6px">Hub:</label>';
+      html += '<select class="wcp-select wcp-select-sm" id="wcpSitemapPlanHub">';
+      if (!hubs.length) {
+        html += '<option value="">— No hubs yet —</option>';
+      } else {
+        for (var hi = 0; hi < hubs.length; hi++) {
+          var h = hubs[hi];
+          html += '<option value="' + esc(h.id) + '"' + (S.sitemapPlanHubId === h.id ? ' selected' : '') + '>' + esc(h.name) + '</option>';
+        }
+      }
+      html += '</select>';
+      html += '</div>';
+    }
+    html += '</div>';
     return html;
   }
 
@@ -88,13 +140,23 @@
     // current sitemap state (no-title pages → Fetch titles; has pages → AI suggest priorities)
     var untitled = 0;
     for (var ui = 0; ui < allPages.length; ui++) { if (!allPages[ui].title && allPages[ui].status !== 'removed') untitled++; }
-    if (untitled > 0 || allPages.length > 0) {
+    // Show the Diff button only when at least one hub has a planned tree
+    // (otherwise there's nothing to diff against).
+    var anyPlanned = false;
+    var plannedAll = (sm.planned || {});
+    for (var phid in plannedAll) {
+      if (plannedAll[phid] && plannedAll[phid].nodes && plannedAll[phid].nodes.length) { anyPlanned = true; break; }
+    }
+    if (untitled > 0 || allPages.length > 0 || anyPlanned) {
       html += '<div class="wcp-sitemap-ai-row">';
       if (untitled > 0) {
         html += '<button class="wcp-btn wcp-btn-sm wcp-btn-ghost" data-action="sitemap-fetch-titles" title="Try to fetch <title> from each URL that has no title. Many public sites will be blocked by CORS.">' + icon('download') + ' Fetch titles <span class="wcp-text-muted">(' + untitled + ')</span></button>';
       }
       if (allPages.length > 0) {
         html += '<button class="wcp-btn wcp-btn-ai wcp-btn-sm" data-action="sitemap-suggest-priorities" title="Let AI propose P1/P2/P3 for each page based on traffic/revenue signal">' + icon('sparkles') + ' Suggest priorities</button>';
+      }
+      if (anyPlanned) {
+        html += '<button class="wcp-btn wcp-btn-sm wcp-btn-ghost" data-action="sitemap-show-diff" title="Compare planned vs live pages per hub">' + icon('arrows-left-right') + ' Diff vs planned</button>';
       }
       html += '</div>';
     }
@@ -273,9 +335,14 @@
     }
     html += '</div>';
 
-    // TITLE
+    // TITLE — adds a primary-hub dot (Phase 4 hybrid binding) and a
+    // "from plan" badge when the page was promoted from a planned node
+    // (Phase 5). Both are subtle visual cues, not interactive.
     html += '<div class="wcp-sitemap-row-title">';
+    var primaryHub = page.hub_id ? S.hubMap[page.hub_id] : null;
+    if (primaryHub) html += '<span class="wcp-sitemap-row-hubdot" style="background:' + (primaryHub.color || '#6b7280') + '" title="Hub: ' + esc(primaryHub.name) + '"></span>';
     html += '<span class="wcp-sitemap-row-title-text">' + esc(titleText) + '</span>';
+    if (page.source === 'planned') html += '<span class="wcp-badge wcp-badge-plan" title="Promoted from planned tree">' + icon('sparkles') + ' planned</span>';
     html += '</div>';
 
     // GROUP chip — click opens the inline group picker on that row
@@ -500,6 +567,58 @@
     html += '</select>';
     html += '<button class="wcp-btn wcp-btn-sm wcp-btn-ghost" data-action="sitemap-manage-groups" title="Create or edit groups">' + icon('sliders') + ' Manage</button>';
     html += '</div></div>';
+
+    // Hub binding (Phase 4.5) — primary hub + secondary tag hubs/clusters.
+    // Hybrid model: the primary hub drives tree coloring & default ownership;
+    // tag arrays let one page belong to multiple hubs (cross-cutting topics).
+    var allHubs = (S.data.hubs || []).slice().sort(function(a, b) { return (a.name || '').localeCompare(b.name || ''); });
+    html += '<div class="wcp-sitemap-detail-block">';
+    html += '<div class="wcp-section-label">' + icon('sitemap') + ' Hub Binding</div>';
+    html += '<div class="wcp-form-group" style="margin-bottom:var(--wcp-space-2)">';
+    html += '<label class="wcp-text-xs wcp-text-muted">Primary hub</label>';
+    html += '<select class="wcp-select wcp-select-sm" data-action="sitemap-page-set-hub" data-id="' + esc(page.id) + '">';
+    html += '<option value=""' + (!page.hub_id ? ' selected' : '') + '>— Unassigned —</option>';
+    for (var hbi = 0; hbi < allHubs.length; hbi++) {
+      var hb = allHubs[hbi];
+      html += '<option value="' + esc(hb.id) + '"' + (page.hub_id === hb.id ? ' selected' : '') + '>' + esc(hb.name) + '</option>';
+    }
+    html += '</select></div>';
+
+    // Primary cluster (filtered to the primary hub's clusters; disabled
+    // when no primary hub is set since clusters don't exist outside a hub).
+    var primaryClusters = page.hub_id ? getHubClusters(page.hub_id) : [];
+    html += '<div class="wcp-form-group" style="margin-bottom:var(--wcp-space-2)">';
+    html += '<label class="wcp-text-xs wcp-text-muted">Primary cluster</label>';
+    html += '<select class="wcp-select wcp-select-sm" data-action="sitemap-page-set-cluster" data-id="' + esc(page.id) + '"' + (!page.hub_id ? ' disabled' : '') + '>';
+    html += '<option value=""' + (!page.cluster_id ? ' selected' : '') + '>— None —</option>';
+    for (var pci = 0; pci < primaryClusters.length; pci++) {
+      var pc = primaryClusters[pci];
+      html += '<option value="' + esc(pc.id) + '"' + (page.cluster_id === pc.id ? ' selected' : '') + '>' + esc(pc.name) + '</option>';
+    }
+    html += '</select>';
+    if (!page.hub_id) html += '<div class="wcp-form-hint">Pick a primary hub first.</div>';
+    html += '</div>';
+
+    // Secondary hub tags — multi-select for cross-cutting pages. Excludes
+    // the primary hub (which is implicit).
+    var tagHubIds = Array.isArray(page.tag_hub_ids) ? page.tag_hub_ids : [];
+    html += '<div class="wcp-form-group">';
+    html += '<label class="wcp-text-xs wcp-text-muted">Secondary hubs</label>';
+    html += '<div class="wcp-sitemap-hubtags">';
+    var secondaryRendered = 0;
+    for (var hsi = 0; hsi < allHubs.length; hsi++) {
+      var sh = allHubs[hsi];
+      if (sh.id === page.hub_id) continue; // primary is implicit
+      var on = tagHubIds.indexOf(sh.id) > -1;
+      html += '<label class="wcp-sitemap-hubtag-chk' + (on ? ' is-on' : '') + '" style="--hub-color:' + (sh.color || '#6b7280') + '">';
+      html += '<input type="checkbox" data-action="sitemap-page-toggle-hubtag" data-id="' + esc(page.id) + '" data-hub-id="' + esc(sh.id) + '"' + (on ? ' checked' : '') + '>';
+      html += '<span>' + esc(sh.name) + '</span>';
+      html += '</label>';
+      secondaryRendered++;
+    }
+    if (!secondaryRendered) html += '<span class="wcp-text-xs wcp-text-muted">No other hubs to tag.</span>';
+    html += '</div></div>';
+    html += '</div>';
 
     // Priority picker — manual traffic/revenue/link-building judgement
     html += '<div class="wcp-sitemap-detail-block">';
