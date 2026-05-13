@@ -22,8 +22,8 @@
       // Ideas / AI
       'lightbulb': 'fa-lightbulb',
       'sparkles': 'fa-sparkles',
-      'wand-magic': 'fa-wand-magic-sparkles',
-      'wand-magic-sparkles': 'fa-wand-magic-sparkles',
+      'wand-magic': 'fa-wand-sparkles',           // fa-wand-magic-sparkles is FA Pro — fall back to free fa-wand-sparkles
+      'wand-magic-sparkles': 'fa-wand-sparkles',  // ditto
       'brain': 'fa-brain',
       'robot': 'fa-robot',
 

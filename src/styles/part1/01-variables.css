@@ -44,10 +44,13 @@
   --wcp-warning: var(--gua-warning, #e37400); --wcp-warning-light: var(--gua-warning-light, #fef7e0);
   --wcp-error:   var(--gua-error,   #d93025); --wcp-error-light:   var(--gua-error-light,   #fce8e6);
   --wcp-info:    var(--gua-info,    #1a73e8); --wcp-info-light:    var(--gua-info-light,    #e8f0fe);
-  /* Domain colors — hub/cluster/content/AEO (app-specific, no brand equivalent) */
-  --wcp-hub: #1a73e8; --wcp-hub-light: #e8f0fe;
+  /* Domain colors — hub/cluster/content/AEO (app-specific, NOT aliased to brand
+     tokens because they encode app-internal semantic categories that ~80 JS
+     literals across src/part1/01-constants.js depend on. Treat them as
+     frozen app palette, not as brand color.) */
+  --wcp-hub: #2563eb; --wcp-hub-light: #eff6ff;
   --wcp-cluster: #7c3aed; --wcp-cluster-light: #f3f0ff;
-  --wcp-content: #0d904f; --wcp-content-light: #e6f4ea;
+  --wcp-content: #059669; --wcp-content-light: #ecfdf5;
   --wcp-coral: #e85d3a; --wcp-coral-light: #fff4f0;
   --wcp-teal: #0d9488; --wcp-teal-light: #f0fdfa;
   --wcp-pink: #d946a8; --wcp-pink-light: #fdf2f9;
