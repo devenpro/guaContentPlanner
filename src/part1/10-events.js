@@ -26,16 +26,41 @@
       if (view) navigate(view);
     });
 
-    // Sidebar toggle
-    $(document).off('click.wcp-sidebar-toggle').on('click.wcp-sidebar-toggle', '#wcpSidebarToggle', function() {
-      S.sidebarCollapsed = !S.sidebarCollapsed;
-      $('#wcpSidebar').toggleClass('wcp-sidebar-collapsed', S.sidebarCollapsed);
+    // Sidebar toggle — viewport-aware per docs/05-app-layout-system.md §4.5.
+    // On wide viewports (>992px) the sidebar lives in flow and the toggle
+    // collapses it to 56px. On narrow viewports it leaves the flow and the
+    // toggle opens/closes it as a drawer with a backdrop.
+    function _toggleSidebar() {
+      var $sidebar = $('#wcpSidebar');
+      if (window.innerWidth <= 992) {
+        var nowOpen = !$sidebar.hasClass('wcp-sidebar-open');
+        $sidebar.toggleClass('wcp-sidebar-open', nowOpen);
+        if (nowOpen) {
+          if (!$('#wcpSidebarOverlay').length) {
+            $('<div id="wcpSidebarOverlay" class="wcp-sidebar-overlay"></div>').appendTo('#wcpApp');
+          }
+        } else {
+          $('#wcpSidebarOverlay').remove();
+        }
+      } else {
+        S.sidebarCollapsed = !S.sidebarCollapsed;
+        $sidebar.toggleClass('wcp-sidebar-collapsed', S.sidebarCollapsed);
+      }
+    }
+    $(document).off('click.wcp-sidebar-toggle').on('click.wcp-sidebar-toggle', '#wcpSidebarToggle', _toggleSidebar);
+    $(document).off('click.wcp-sidebar-brand').on('click.wcp-sidebar-brand', '#wcpSidebarBrand', _toggleSidebar);
+    $(document).off('click.wcp-sidebar-overlay').on('click.wcp-sidebar-overlay', '#wcpSidebarOverlay', function() {
+      $('#wcpSidebar').removeClass('wcp-sidebar-open');
+      $(this).remove();
     });
-
-    // Sidebar brand click (also toggles)
-    $(document).off('click.wcp-sidebar-brand').on('click.wcp-sidebar-brand', '#wcpSidebarBrand', function() {
-      S.sidebarCollapsed = !S.sidebarCollapsed;
-      $('#wcpSidebar').toggleClass('wcp-sidebar-collapsed', S.sidebarCollapsed);
+    // Reset mobile drawer state if the user grows the viewport back past the
+    // breakpoint while the drawer is open, so the inline-flow sidebar doesn't
+    // get stuck with stale classes.
+    $(window).off('resize.wcp-sidebar').on('resize.wcp-sidebar', function() {
+      if (window.innerWidth > 992) {
+        $('#wcpSidebar').removeClass('wcp-sidebar-open');
+        $('#wcpSidebarOverlay').remove();
+      }
     });
 
     // Save button
