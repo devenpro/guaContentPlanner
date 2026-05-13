@@ -292,6 +292,11 @@
     if (patch.group_id !== undefined) page.group_id = patch.group_id;
     if (patch.priority === null || patch.priority === 1 || patch.priority === 2 || patch.priority === 3) page.priority = patch.priority;
     if (patch.status === 'live' || patch.status === 'removed') page.status = patch.status;
+    // Hub binding (Phase 4) — primary hub, primary cluster, secondary tags.
+    if (patch.hub_id !== undefined)     page.hub_id = patch.hub_id;
+    if (patch.cluster_id !== undefined) page.cluster_id = patch.cluster_id;
+    if (Array.isArray(patch.tag_hub_ids))     page.tag_hub_ids = patch.tag_hub_ids;
+    if (Array.isArray(patch.tag_cluster_ids)) page.tag_cluster_ids = patch.tag_cluster_ids;
     page.updated_at = new Date().toISOString();
     logActivity('sitemap_page_updated', '', page.title || page.url, 'Page updated');
     buildMaps(); syncToTextarea();
@@ -517,5 +522,75 @@
       }
     }
     buildMaps();
+  }
+
+  // ─── Planned sitemap CRUD wrappers ────────────────────────────────────
+  // Thin shims over the 18-planned-sitemap helpers that handle activity
+  // logging + sync. Callers in the events layer use these so logging and
+  // persistence stay consistent across UI / AI paths.
+
+  function plannedCreateNode(hubId, parentId, fields) {
+    var node = createPlannedNode(hubId, parentId, fields);
+    if (!node) return null;
+    var hub = S.hubMap[hubId];
+    logActivity('sitemap_planned_node_added', node.id, node.label || '(untitled)', 'Added to "' + (hub ? hub.name : hubId) + '"');
+    buildMaps(); syncToTextarea();
+    return node;
+  }
+
+  function plannedUpdateNode(nodeId, patch) {
+    var node = updatePlannedNode(nodeId, patch);
+    if (!node) return null;
+    logActivity('sitemap_planned_node_updated', node.id, node.label || '(untitled)', 'Node updated');
+    buildMaps(); syncToTextarea();
+    return node;
+  }
+
+  function plannedDeleteNode(nodeId) {
+    var node = getPlannedNode(nodeId);
+    if (!node) return false;
+    var label = node.label || '(untitled)';
+    var ids = deletePlannedNode(nodeId);
+    if (!ids.length) return false;
+    if (S.selectedPlannedNodeId && ids.indexOf(S.selectedPlannedNodeId) > -1) S.selectedPlannedNodeId = null;
+    logActivity('sitemap_planned_node_removed', '', label, 'Removed ' + ids.length + ' node' + (ids.length === 1 ? '' : 's'));
+    buildMaps(); syncToTextarea();
+    return true;
+  }
+
+  function plannedMoveNode(nodeId, newParentId, beforeSiblingId) {
+    // Move parent_id, then re-order within the flat nodes[] array so the
+    // sibling order matches what the user dropped. beforeSiblingId is the
+    // id of the sibling that should come AFTER the moved node; pass ''
+    // (or omit) to append at the end of the new parent's children.
+    var node = getPlannedNode(nodeId);
+    if (!node) return false;
+    var found = getPlannedTreeOfNode(nodeId);
+    if (!found) return false;
+    var tree = found.tree;
+    // Apply parent change via helper (rejects cycles).
+    var ok = movePlannedNode(nodeId, newParentId || '');
+    if (!ok) return false;
+    // Reorder within the flat array: pull out the node, then splice back.
+    var pos = tree.nodes.indexOf(node);
+    if (pos >= 0) tree.nodes.splice(pos, 1);
+    if (beforeSiblingId) {
+      var sibling = getPlannedNode(beforeSiblingId);
+      if (sibling) {
+        var insertAt = tree.nodes.indexOf(sibling);
+        if (insertAt >= 0) {
+          tree.nodes.splice(insertAt, 0, node);
+        } else {
+          tree.nodes.push(node);
+        }
+      } else {
+        tree.nodes.push(node);
+      }
+    } else {
+      tree.nodes.push(node);
+    }
+    logActivity('sitemap_planned_node_moved', node.id, node.label || '(untitled)', 'Node moved');
+    buildMaps(); syncToTextarea();
+    return true;
   }
 

@@ -23,6 +23,9 @@
     ll.selectedHubId          = S.selectedHubId || null;
     ll.selectedTemplateId     = S.selectedTemplateId || null;
     ll.selectedSitemapPageId  = S.selectedSitemapPageId || null;
+    ll.selectedPlannedNodeId  = S.selectedPlannedNodeId || null;
+    ll.sitemapMode            = S.sitemapMode || 'live';
+    ll.sitemapPlanHubId       = S.sitemapPlanHubId || '';
     ll.currentStep            = S.currentStep || 'info';
     ll.settingsTab            = S.settingsTab || 'workspace';
     ll.researchTab            = S.researchTab || 'keywords';
@@ -51,6 +54,11 @@
     if (ll.selectedTemplateId && S.templateMap && S.templateMap[ll.selectedTemplateId]) {
       S.selectedTemplateId = ll.selectedTemplateId;
     }
+    if (ll.selectedPlannedNodeId && S.plannedNodeMap && S.plannedNodeMap[ll.selectedPlannedNodeId]) {
+      S.selectedPlannedNodeId = ll.selectedPlannedNodeId;
+    }
+    if (ll.sitemapMode === 'live' || ll.sitemapMode === 'planned') S.sitemapMode = ll.sitemapMode;
+    if (ll.sitemapPlanHubId && S.hubMap && S.hubMap[ll.sitemapPlanHubId]) S.sitemapPlanHubId = ll.sitemapPlanHubId;
     if (ll.selectedSitemapPageId && S.sitemapPageMap && S.sitemapPageMap[ll.selectedSitemapPageId]) {
       S.selectedSitemapPageId = ll.selectedSitemapPageId;
     }

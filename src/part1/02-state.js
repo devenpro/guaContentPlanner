@@ -34,12 +34,19 @@
     $textarea: null, $metaTextarea: null, $activityTextarea: null, $sitemapTextarea: null, $form: null, $submitBtn: null,
     _initializing: false, initialized: false, _part2bTimeout: false,
     dirty: false, autoSaveTimer: null, lastSaved: null,
-    // Sitemap view state
+    // Sitemap view state (live import + planned per-hub trees)
     sitemapPageMap: {}, sitemapPageByUrl: {}, sitemapGroupMap: {},
     totalSitemapPages: 0,
     selectedSitemapPageId: null,
     sitemapFilter: { search: '', priority: '', group: '', showRemoved: false, sort: 'url', sortBy: 'url' },
     sitemapTreeExpanded: {},   // groupId -> true/false (manual groups only)
-    sitemapViewMode: 'flat'    // 'flat' (sorted list) | 'by_group' (manual user-defined groups)
+    sitemapViewMode: 'flat',   // 'flat' (sorted list) | 'by_group' (manual user-defined groups)
+    // Planned mode — per-hub planned trees with drag/drop editor
+    sitemapMode: 'live',       // 'live' (imported pages) | 'planned' (hub tree)
+    sitemapPlanHubId: '',      // which hub's planned tree is being edited
+    selectedPlannedNodeId: null,
+    plannedTreeExpanded: {},   // node_id -> bool (default true, only stored when toggled)
+    // Planned-tree maps populated in buildMaps()
+    plannedNodeMap: {}, plannedNodeCountByHub: {}, sitemapPagesByHub: {}
   };
 

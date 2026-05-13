@@ -48,7 +48,8 @@
       lastLocation: {
         view: 'dashboard',
         selectedContentId: null, selectedHubId: null, selectedTemplateId: null,
-        selectedSitemapPageId: null,
+        selectedSitemapPageId: null, selectedPlannedNodeId: null,
+        sitemapMode: 'live', sitemapPlanHubId: '',
         currentStep: 'info',
         settingsTab: 'workspace', researchTab: 'keywords',
         savedAt: ''

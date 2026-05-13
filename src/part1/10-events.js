@@ -708,6 +708,231 @@
       renderCurrentView();
     });
 
+    // ── Sitemap mode bar (Phase 4) ────────────────────────────────────
+    $(document).off('click.wcp-sm-mode').on('click.wcp-sm-mode', '[data-action="sitemap-set-mode"]', function() {
+      var mode = $(this).data('mode');
+      if (mode !== 'live' && mode !== 'planned') return;
+      if (S.sitemapMode === mode) return;
+      S.sitemapMode = mode;
+      if (window._wcpLocation) window._wcpLocation.capture();
+      renderCurrentView();
+    });
+
+    $(document).off('change.wcp-sm-planhub').on('change.wcp-sm-planhub', '#wcpSitemapPlanHub', function() {
+      var newHub = $(this).val() || '';
+      if (newHub === S.sitemapPlanHubId) return;
+      S.sitemapPlanHubId = newHub;
+      S.selectedPlannedNodeId = null; // selection is per-hub
+      if (window._wcpLocation) window._wcpLocation.capture();
+      renderCurrentView();
+    });
+
+    // ── Hub binding on a live sitemap page (Phase 4.5) ────────────────
+    $(document).off('change.wcp-sm-pghub').on('change.wcp-sm-pghub', '[data-action="sitemap-page-set-hub"]', function() {
+      var id = $(this).data('id');
+      var page = S.sitemapPageMap[id]; if (!page) return;
+      var newHubId = this.value || '';
+      var patch = { hub_id: newHubId };
+      // Changing primary hub invalidates the primary cluster (clusters are
+      // hub-scoped). Reset cluster_id silently.
+      if (newHubId !== page.hub_id) patch.cluster_id = '';
+      updateSitemapPage(id, patch);
+      $('#wcpSitemapDetailPane').html(renderSitemapDetailPane());
+    });
+
+    $(document).off('change.wcp-sm-pgcluster').on('change.wcp-sm-pgcluster', '[data-action="sitemap-page-set-cluster"]', function() {
+      var id = $(this).data('id');
+      updateSitemapPage(id, { cluster_id: this.value || '' });
+      // No re-render needed — the dropdown reflects its own state.
+    });
+
+    $(document).off('change.wcp-sm-pghubtag').on('change.wcp-sm-pghubtag', '[data-action="sitemap-page-toggle-hubtag"]', function() {
+      var id = $(this).data('id');
+      var hubId = $(this).data('hub-id');
+      var page = S.sitemapPageMap[id]; if (!page || !hubId) return;
+      var tags = Array.isArray(page.tag_hub_ids) ? page.tag_hub_ids.slice() : [];
+      var idx = tags.indexOf(hubId);
+      if (this.checked && idx === -1) tags.push(hubId);
+      else if (!this.checked && idx > -1) tags.splice(idx, 1);
+      updateSitemapPage(id, { tag_hub_ids: tags });
+      // Visual state change on the chip — toggle is-on class without full re-render
+      $(this).closest('.wcp-sitemap-hubtag-chk').toggleClass('is-on', this.checked);
+    });
+
+    // ── Planned tree events (Phase 4.2-4.4) ───────────────────────────
+    $(document).off('click.wcp-pln-root').on('click.wcp-pln-root', '[data-action="planned-add-root"]', function() {
+      var hubId = $(this).data('hub') || S.sitemapPlanHubId;
+      if (!hubId) return;
+      var node = plannedCreateNode(hubId, '', { label: 'New page' });
+      if (node) {
+        S.selectedPlannedNodeId = node.id;
+        renderCurrentView();
+        // Focus the label input so the user can name it immediately.
+        setTimeout(function() {
+          var $el = $('#wcpPlannedDetailPane .wcp-sitemap-title-input').first();
+          if ($el.length) $el.trigger('focus').select();
+        }, 0);
+      }
+    });
+
+    $(document).off('click.wcp-pln-sel').on('click.wcp-pln-sel', '[data-action="planned-select-node"]', function(e) {
+      // Ignore clicks on inner controls (kebab, chevron). They bubble back here
+      // because of the row's data-action, but their own handlers stopPropagation.
+      var nodeId = $(this).data('node-id');
+      if (!nodeId) return;
+      e.preventDefault();
+      S.selectedPlannedNodeId = nodeId;
+      if (window._wcpLocation) window._wcpLocation.capture();
+      // Cheap re-render: swap the detail pane + flip active class on rows.
+      var hub = S.hubMap[S.sitemapPlanHubId]; if (!hub) return;
+      $('#wcpPlannedDetailPane').html(renderPlannedDetailPane(hub));
+      $('.wcp-planned-node').removeClass('is-active');
+      $('.wcp-planned-node[data-node-id="' + nodeId + '"]').addClass('is-active');
+    });
+
+    $(document).off('click.wcp-pln-chev').on('click.wcp-pln-chev', '[data-action="planned-toggle-expand"]', function(e) {
+      e.stopPropagation();
+      var nodeId = $(this).data('node-id'); if (!nodeId) return;
+      // Default-expanded; only stored when collapsed.
+      var cur = S.plannedTreeExpanded[nodeId] !== false;
+      S.plannedTreeExpanded[nodeId] = !cur;
+      renderCurrentView();
+    });
+
+    // Field edits (save on blur for text/textarea, change for select)
+    $(document).off('blur.wcp-pln-save').on('blur.wcp-pln-save', '[data-action="planned-save"]', function() {
+      var $el = $(this);
+      if ($el.is('select')) return; // handled by change below
+      var nodeId = $el.data('node-id'); var field = $el.data('field');
+      if (!nodeId || !field) return;
+      var val = $el.val();
+      var patch = {}; patch[field] = val;
+      var node = plannedUpdateNode(nodeId, patch);
+      if (node && (field === 'label' || field === 'priority' || field === 'intent')) {
+        // Tree row needs to refresh too — re-render whole tree pane is cheapest.
+        renderCurrentView();
+      }
+    });
+    $(document).off('change.wcp-pln-save').on('change.wcp-pln-save', '[data-action="planned-save"]', function() {
+      var $el = $(this); if (!$el.is('select')) return;
+      var nodeId = $el.data('node-id'); var field = $el.data('field');
+      if (!nodeId || !field) return;
+      var patch = {}; patch[field] = $el.val();
+      plannedUpdateNode(nodeId, patch);
+      // Re-render tree pane so the intent letter / status / etc. update.
+      renderCurrentView();
+    });
+
+    $(document).off('click.wcp-pln-pri').on('click.wcp-pln-pri', '[data-action="planned-set-priority"]', function(e) {
+      e.stopPropagation();
+      var nodeId = $(this).data('node-id');
+      var raw = $(this).data('priority');
+      var val = (raw === 'auto') ? null : parseInt(raw, 10);
+      if (val !== null && (val < 1 || val > 3)) return;
+      plannedUpdateNode(nodeId, { priority: val });
+      renderCurrentView();
+    });
+
+    $(document).off('click.wcp-pln-del').on('click.wcp-pln-del', '[data-action="planned-delete"]', function(e) {
+      e.stopPropagation();
+      var nodeId = $(this).data('node-id'); if (!nodeId) return;
+      var node = S.plannedNodeMap[nodeId];
+      var label = node ? (node.label || '(untitled)') : 'this node';
+      if (!confirm('Delete "' + label + '" and all its children?')) return;
+      plannedDeleteNode(nodeId);
+      renderCurrentView();
+    });
+
+    // Row kebab — for now opens a tiny prompt-based menu. A proper context
+    // menu component lands in a follow-up; this keeps the wiring proven.
+    $(document).off('click.wcp-pln-kebab').on('click.wcp-pln-kebab', '[data-action="planned-row-menu"]', function(e) {
+      e.stopPropagation();
+      var nodeId = $(this).data('node-id'); if (!nodeId) return;
+      var hubId = S.sitemapPlanHubId;
+      var actions = '1 Add child\n2 Add sibling\n3 Delete\n\nType a number:';
+      var pick = window.prompt(actions, '1');
+      if (!pick) return;
+      if (pick === '1') {
+        var child = plannedCreateNode(hubId, nodeId, { label: 'New page' });
+        if (child) S.selectedPlannedNodeId = child.id;
+        renderCurrentView();
+      } else if (pick === '2') {
+        var parent = S.plannedNodeMap[nodeId];
+        var pid = parent ? (parent.parent_id || '') : '';
+        var sib = plannedCreateNode(hubId, pid, { label: 'New page' });
+        if (sib) S.selectedPlannedNodeId = sib.id;
+        renderCurrentView();
+      } else if (pick === '3') {
+        var node = S.plannedNodeMap[nodeId];
+        var label = node ? (node.label || '(untitled)') : 'this node';
+        if (confirm('Delete "' + label + '" and all its children?')) {
+          plannedDeleteNode(nodeId);
+          renderCurrentView();
+        }
+      }
+    });
+
+    // ── Planned tree drag-and-drop (Phase 4.3) ────────────────────────
+    // Native HTML5 DnD; payload = node id stored on dataTransfer. Drop
+    // targets:
+    //   .wcp-planned-row           → reparent as last child of target
+    //   .wcp-planned-drop-before   → insert as sibling BEFORE target
+    //   .wcp-planned-drop-end      → demote to root level (append)
+    $(document).off('dragstart.wcp-pln').on('dragstart.wcp-pln', '.wcp-planned-row', function(e) {
+      var nodeId = $(this).closest('.wcp-planned-node').data('node-id');
+      if (!nodeId) return;
+      var dt = e.originalEvent.dataTransfer;
+      dt.setData('text/plain', nodeId);
+      dt.setData('application/x-wcp-planned-node', nodeId);
+      dt.effectAllowed = 'move';
+      $(this).addClass('is-dragging');
+    });
+    $(document).off('dragend.wcp-pln').on('dragend.wcp-pln', '.wcp-planned-row', function() {
+      $(this).removeClass('is-dragging');
+      $('.wcp-planned-drop-active').removeClass('wcp-planned-drop-active');
+    });
+    $(document).off('dragover.wcp-pln').on('dragover.wcp-pln',
+      '.wcp-planned-row, .wcp-planned-drop-before, .wcp-planned-drop-end',
+      function(e) {
+        var dt = e.originalEvent.dataTransfer;
+        if (!dt) return;
+        // Only handle our own payloads — refuse browser file drops, etc.
+        if (dt.types && Array.prototype.indexOf.call(dt.types, 'application/x-wcp-planned-node') === -1 &&
+            Array.prototype.indexOf.call(dt.types, 'text/plain') === -1) return;
+        e.preventDefault();
+        dt.dropEffect = 'move';
+        $('.wcp-planned-drop-active').removeClass('wcp-planned-drop-active');
+        $(this).addClass('wcp-planned-drop-active');
+      });
+    $(document).off('drop.wcp-pln').on('drop.wcp-pln',
+      '.wcp-planned-row, .wcp-planned-drop-before, .wcp-planned-drop-end',
+      function(e) {
+        e.preventDefault();
+        var dt = e.originalEvent.dataTransfer; if (!dt) return;
+        var draggedId = dt.getData('application/x-wcp-planned-node') || dt.getData('text/plain');
+        if (!draggedId) return;
+        $('.wcp-planned-drop-active').removeClass('wcp-planned-drop-active');
+
+        var $target = $(this);
+        if ($target.hasClass('wcp-planned-drop-end')) {
+          // Demote to root, append at end of root list.
+          plannedMoveNode(draggedId, '', '');
+        } else if ($target.hasClass('wcp-planned-drop-before')) {
+          // Sibling-before — same parent as target, inserted before target.
+          var siblingId = $target.data('node-id'); if (!siblingId) return;
+          var sibling = S.plannedNodeMap[siblingId]; if (!sibling) return;
+          plannedMoveNode(draggedId, sibling.parent_id || '', siblingId);
+        } else {
+          // Row body — reparent as last child of target.
+          var targetId = $target.closest('.wcp-planned-node').data('node-id');
+          if (!targetId || targetId === draggedId) return;
+          plannedMoveNode(draggedId, targetId, '');
+          // Auto-expand the parent so the move is visible.
+          S.plannedTreeExpanded[targetId] = true;
+        }
+        renderCurrentView();
+      });
+
     console.log('[WCP] Event handlers registered');
   }
 

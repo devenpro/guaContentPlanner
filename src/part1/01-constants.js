@@ -141,7 +141,11 @@
     'sitemap_link_selected':  { icon: 'link',              color: '#7c3aed' },
     'sitemap_link_exported':  { icon: 'paper-plane',       color: '#0891b2' },
     'sitemap_link_published': { icon: 'link-simple',       color: '#059669' },
-    'sitemap_link_rejected':  { icon: 'link-slash',        color: '#6b7280' }
+    'sitemap_link_rejected':  { icon: 'link-slash',        color: '#6b7280' },
+    'sitemap_planned_node_added':    { icon: 'diagram-project', color: '#059669' },
+    'sitemap_planned_node_updated':  { icon: 'diagram-project', color: '#2563eb' },
+    'sitemap_planned_node_moved':    { icon: 'arrows-up-down-left-right', color: '#7c3aed' },
+    'sitemap_planned_node_removed':  { icon: 'trash',             color: '#dc2626' }
   };
 
   // Sitemap page priority — a MANUAL traffic/revenue/link-building judgement.

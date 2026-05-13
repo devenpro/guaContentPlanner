@@ -1220,3 +1220,221 @@
   .wcp-linkpick-anchor { grid-column: 1 / -1; }
   .wcp-linkpick-row-actions { grid-column: 1 / -1; justify-content: flex-end; }
 }
+
+/* ============================================================ */
+/* PHASE 4: Sitemap mode bar + Planned tree editor              */
+/* ============================================================ */
+
+/* Mode bar — sits between the summary strip and the split pane. */
+.wcp-sitemap-modebar {
+  display: flex;
+  align-items: center;
+  gap: var(--wcp-space-3);
+  padding: var(--wcp-space-2) var(--wcp-space-3);
+  background: var(--wcp-gray-50);
+  border: 1px solid var(--wcp-border-light);
+  border-radius: var(--wcp-radius-md);
+  margin-bottom: var(--wcp-space-3);
+  flex-wrap: wrap;
+}
+.wcp-sitemap-modebar-tabs { display: flex; gap: 4px; }
+.wcp-sitemap-modebar-tab {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  font-size: var(--wcp-font-size-sm);
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--wcp-radius-md);
+  color: var(--wcp-text-secondary);
+  cursor: pointer;
+}
+.wcp-sitemap-modebar-tab:hover { background: var(--wcp-gray-100); color: var(--wcp-text-primary); }
+.wcp-sitemap-modebar-tab.is-active {
+  background: var(--wcp-surface, #fff);
+  border-color: var(--wcp-border-light);
+  color: var(--wcp-text-primary);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.wcp-sitemap-modebar-hub {
+  display: flex; align-items: center;
+  margin-left: auto;
+}
+
+/* Planned mode split pane — same shell as live mode. */
+.wcp-split-pane-planned { /* inherits .wcp-split-pane */ }
+.wcp-planned-pane .wcp-list-pane-items { padding: 6px 6px; }
+.wcp-planned-ai-row {
+  padding: 6px 8px;
+  background: rgba(124, 58, 237, 0.06);
+  border: 1px dashed rgba(124, 58, 237, 0.2);
+  border-radius: 6px;
+}
+
+/* Tree rows — each node is a stack of {drop-before, row, children}. */
+.wcp-planned-tree { padding-bottom: 60px; position: relative; }
+.wcp-planned-node {
+  --depth: 0;
+  position: relative;
+}
+.wcp-planned-node.is-active > .wcp-planned-row {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: var(--wcp-primary);
+}
+.wcp-planned-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  padding-left: calc(10px + var(--depth) * 18px);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  font-size: var(--wcp-font-size-sm);
+  line-height: 1.3;
+}
+.wcp-planned-row:hover {
+  background: var(--wcp-gray-50);
+  border-color: var(--wcp-border-light);
+}
+.wcp-planned-row.is-dragging { opacity: 0.4; }
+.wcp-planned-children { margin-left: 0; /* indent applied per-row via --depth */ }
+
+.wcp-planned-chev {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--wcp-text-muted);
+  flex-shrink: 0;
+}
+.wcp-planned-chev:hover { color: var(--wcp-text-primary); }
+.wcp-planned-chev-empty { cursor: default; }
+
+.wcp-planned-pip {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--wcp-text-muted);
+}
+.wcp-planned-status-planned  .wcp-planned-pip { background: #9aa0a6; }
+.wcp-planned-status-proposed .wcp-planned-pip { background: #7c3aed; }
+.wcp-planned-status-promoted .wcp-planned-pip { background: #059669; }
+
+.wcp-planned-status-badge {
+  text-transform: capitalize;
+  font-size: 10px;
+  padding: 1px 6px;
+}
+.wcp-planned-status-badge.wcp-planned-status-planned  { background: #f1f3f4; color: #5f6368; }
+.wcp-planned-status-badge.wcp-planned-status-proposed { background: rgba(124, 58, 237, 0.12); color: #7c3aed; }
+.wcp-planned-status-badge.wcp-planned-status-promoted { background: rgba(5, 150, 105, 0.12); color: #059669; }
+
+.wcp-planned-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--wcp-text-primary);
+  font-weight: 500;
+}
+.wcp-planned-intent {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  font-size: 10px; font-weight: 700;
+  background: var(--wcp-gray-100);
+  color: var(--wcp-text-secondary);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.wcp-planned-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--wcp-text-muted);
+  padding: 1px 6px;
+  background: var(--wcp-gray-100);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.wcp-planned-kebab {
+  visibility: hidden;
+  flex-shrink: 0;
+}
+.wcp-planned-row:hover .wcp-planned-kebab,
+.wcp-planned-node.is-active .wcp-planned-kebab { visibility: visible; }
+
+/* Drop zones — thin "before" strip above each row + a tall "demote to root"
+   zone after the last child. Active state shows a blue insertion line. */
+.wcp-planned-drop-before {
+  height: 6px;
+  margin: -3px 0;
+  border-radius: 3px;
+}
+.wcp-planned-drop-before.wcp-planned-drop-active {
+  background: var(--wcp-primary);
+  height: 4px;
+  margin: -2px 0;
+}
+.wcp-planned-row.wcp-planned-drop-active {
+  background: rgba(37, 99, 235, 0.12);
+  border-color: var(--wcp-primary);
+  border-style: dashed;
+}
+.wcp-planned-drop-end {
+  height: 40px;
+  margin: 8px 0;
+  border: 1px dashed transparent;
+  border-radius: 6px;
+}
+.wcp-planned-drop-end.wcp-planned-drop-active {
+  background: rgba(37, 99, 235, 0.06);
+  border-color: var(--wcp-primary);
+}
+
+/* Detail pane: breadcrumb + form sections reuse sitemap-detail tokens. */
+.wcp-planned-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  font-size: var(--wcp-font-size-xs);
+  padding: 4px 0 8px;
+  color: var(--wcp-text-muted);
+}
+.wcp-planned-breadcrumb a { color: var(--wcp-text-secondary); text-decoration: none; }
+.wcp-planned-breadcrumb a:hover { color: var(--wcp-primary); }
+.wcp-planned-breadcrumb-sep { color: var(--wcp-text-muted); }
+.wcp-planned-breadcrumb-current { color: var(--wcp-text-primary); font-weight: 600; }
+
+/* Hub binding chips on the live page detail pane. */
+.wcp-sitemap-hubtags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.wcp-sitemap-hubtag-chk {
+  --hub-color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  font-size: var(--wcp-font-size-xs);
+  background: var(--wcp-gray-50);
+  border: 1px solid var(--wcp-border-light);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.wcp-sitemap-hubtag-chk input { margin: 0; cursor: pointer; }
+.wcp-sitemap-hubtag-chk.is-on {
+  background: color-mix(in srgb, var(--hub-color) 12%, transparent);
+  border-color: var(--hub-color);
+  color: var(--hub-color);
+  font-weight: 600;
+}
