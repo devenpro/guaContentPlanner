@@ -1,5 +1,42 @@
 # WCP-CHANGELOG.md — Version History
 
+## Unreleased
+
+### Standardization to shared Go Ultra AI app layout
+
+Brought the Content Planner shell into compliance with the new shared
+in-product layout standard at `docs/05-app-layout-system.md`. Visual
+chrome unchanged for most users; underlying tokens, icons, and
+sidebar wiring now match what every Go Ultra AI app will follow.
+
+- **Tokens** — Introduced `--gua-*` brand tokens at the top of
+  `src/styles/part1/01-variables.css`. Re-aliased `--wcp-primary`,
+  `--wcp-primary-hover`, `--wcp-primary-light`, semantic colors, and
+  the full grey scale to the brand tokens. Primary blue shifted from
+  `#2563eb` to `#1a73e8` everywhere it surfaces as brand color
+  (buttons, focus rings, hover lifts). Replaced all
+  `rgba(37,99,235,…)` literals across 12 CSS files with
+  `rgba(26,115,232,…)`. Domain colors (`--wcp-hub`, `--wcp-cluster`,
+  `--wcp-content`, `--wcp-coral`, `--wcp-teal`, `--wcp-pink`)
+  intentionally retained their literal values — they encode app
+  semantics that ~80 JS literals depend on.
+- **Icons** — Removed reliance on Font Awesome Pro. The icon helper
+  now aliases `fa-wand-magic-sparkles` → `fa-wand-sparkles` and
+  keeps the existing `fa-rocket-launch` → `fa-rocket` fallback.
+  README and PROJECT.md updated to list "Font Awesome 6 Free Solid"
+  as the prerequisite instead of FA Pro.
+- **Sidebar nav groups** — Renamed `Strategy` → `Work` and
+  `System` → `Settings` to match the canonical labels in
+  `05-app-layout-system.md` §4.3. `Overview`, `Content`, and
+  `Library` already matched.
+- **Sidebar brand mark** — Replaced the hardcoded `W` span with
+  `icon('sitemap')`. Each Go Ultra AI app now picks its own FA Free
+  Solid icon for this slot.
+- **Mobile drawer** — The sidebar toggle is now viewport-aware. Above
+  992px it toggles inline collapse as before; at or below 992px it
+  toggles a drawer with a backdrop. A resize listener clears mobile
+  classes when the viewport grows past the breakpoint.
+
 ## v1.0.0 (2026-03-31)
 
 ### Initial Release
