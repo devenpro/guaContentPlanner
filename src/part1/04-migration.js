@@ -26,7 +26,7 @@
           primary_markets: [], deadlines: {}
         },
         pipeline_stages: getDefaultPipelineConfig(),
-        brand_context_enabled: { core: true, content: true, seo: true },
+        brand_context_enabled: { core: true, content: true, seo: true, design_guide: true },
         export_config: {
           cw_landing_stage: 'research',
           include_writing_instructions: true,
@@ -265,7 +265,9 @@
         m.settings.pipeline_stages.push({ id: pstep.key, name: pstep.label, required_fields: [], auto_advance: true });
       }
     }
-    m.settings.brand_context_enabled = m.settings.brand_context_enabled || { core: true, content: true, seo: true };
+    m.settings.brand_context_enabled = m.settings.brand_context_enabled || { core: true, content: true, seo: true, design_guide: true };
+    // Backfill design_guide toggle for workspaces saved before it existed
+    if (m.settings.brand_context_enabled.design_guide === undefined) m.settings.brand_context_enabled.design_guide = true;
     m.settings.export_config = m.settings.export_config || getDefaultMeta().settings.export_config;
     m.aiPreferences = m.aiPreferences || { appDefault: {}, perAction: {}, lastProvider: '', lastModel: '', defaultInstructions: '' };
     m.aiPreferences.perAction = m.aiPreferences.perAction || {};

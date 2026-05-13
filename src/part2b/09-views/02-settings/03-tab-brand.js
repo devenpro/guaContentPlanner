@@ -4,9 +4,10 @@
     html += '<div class="wcp-settings-section"><h3>' + icon('building') + ' Brand Data Sources</h3>';
     html += '<p class="wcp-text-sm wcp-text-muted" style="margin-bottom:var(--wcp-space-3)">Toggle which brand context sections to include in AI prompts.</p>';
     var sections = [
-      { key: 'core', label: 'Core Brand', desc: 'Brand name, voice, audience, pain points, dos/donts, forbidden words' },
-      { key: 'content', label: 'Content Writing', desc: 'Writing style, sentence rules, CTA style' },
-      { key: 'seo', label: 'SEO Strategy', desc: 'Niche, keyword clusters, content gaps, markets' }
+      { key: 'core',         label: 'Core Brand',     desc: 'Brand name, voice, audience, pain points, dos/donts, forbidden words' },
+      { key: 'content',      label: 'Content Writing', desc: 'Writing style, sentence rules, CTA style' },
+      { key: 'seo',          label: 'SEO Strategy',   desc: 'Niche, keyword clusters, content gaps, markets' },
+      { key: 'design_guide', label: 'Design Guide',   desc: 'Visual / structural direction injected into design-aware prompts (sourced from brand.core.design_guide markdown)' }
     ];
     for (var si = 0; si < sections.length; si++) {
       var sec = sections[si];
@@ -26,6 +27,21 @@
       if (core.audience && core.audience.primary) html += '<div class="wcp-form-group"><label>Audience</label><div class="wcp-text-sm">' + esc(core.audience.primary) + '</div></div>';
       var seo = BrandService.getSeo();
       if (seo.niche) html += '<div class="wcp-form-group"><label>Niche</label><div class="wcp-text-sm">' + esc(seo.niche) + '</div></div>';
+      html += '</div>';
+
+      // Design guide preview — read-only markdown source from .brand-core-data.
+      // Rendered as a <pre> block (no HTML conversion) because the planner
+      // doesn't ship a markdown renderer, and this keeps the raw markdown
+      // identical to what gets injected into AI prompts. Empty state nudges
+      // the admin to populate the field in Drupal.
+      html += '<div class="wcp-settings-section"><h3>' + icon('palette') + ' Design Guide</h3>';
+      var dg = BrandService.getDesignGuide();
+      if (dg) {
+        html += '<p class="wcp-text-sm wcp-text-muted" style="margin-bottom:var(--wcp-space-2)">Markdown source from <code>brand.core.design_guide</code> — included verbatim in design-aware AI prompts.</p>';
+        html += '<pre class="wcp-md-preview" style="white-space:pre-wrap;font-family:var(--wcp-font-mono);font-size:var(--wcp-font-size-xs);background:var(--wcp-gray-50);border:1px solid var(--wcp-border-light);border-radius:var(--wcp-radius-md);padding:var(--wcp-space-3);max-height:320px;overflow:auto;color:var(--wcp-text-primary)">' + esc(dg) + '</pre>';
+      } else {
+        html += '<p class="wcp-text-sm wcp-text-muted">No design guide on this brand. To enable design-aware AI prompts, add a markdown text field to the brand entity in Drupal and expose it as <code>design_guide</code> inside the <code>.brand-core-data</code> JSON blob.</p>';
+      }
       html += '</div>';
     } else {
       html += '<div class="wcp-settings-section"><h3>' + icon('warning') + ' No Brand Data</h3>';
